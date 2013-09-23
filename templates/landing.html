@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block js %}
+<script type="text/javascript">
+
+function set_fields(pos){
+	var longitude = pos.coords.longitude;
+	var latitude  = pos.coords.latitude;
+	$('#longitude').val(longitude);
+	$('#latitude').val(latitude);
+};
+
+$(document).ready(function() {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition( set_fields );
+	}
+});
+</script>
+{% endblock %}
+
+{% block body_block %}
+{% from "_formhelpers.html" import render_field %}
+<div id="landing">
+	<div class="shell">
+		<div class="logo">
+			<img
+				src="{{ url_for('static', filename= 'css/images/logo-landing.png')}}"
+				alt="" width="434" height="131" />
+			<p class="slogan">
+				A better way to search for a <a href="#">vehicle</a>
+			</p>
+		</div>
+		<form action="{{ url_for( 'landing' )}}" method="post">
+			{{ form.csrf_token }}
+            {{ form.latitude  }}
+            {{ form.longitude }}
+			{{ render_field(form.query, class='field',placeholder='What are you looking for?') }}
+			{{ form.submit(class = "btn-search notext") }}
+		</form>
+
+		<div class="entry">
+			<a href="#" class="ico-help"><img
+				src="{{ url_for ('static', filename = 'css/images/ico-question.png')}}"
+				alt="" width="28" height="86" /></a>
+			<p>Simply describe the vehicle you are looking for with as many
+				details as you like</p>
+
+			<h5>Example</h5>
+			<div class="text-fader">
+				<ul class="slides">
+					<li>
+						<h4>"Toyota Tacoma under $9000.00 with less than 200,000
+							miles"</h4>
+					</li>
+					<li>
+						<h4>"blue Chevy S10 less than $8000 blue less than 100,000
+							miles"</h4>
+					</li>
+					<li>
+						<h4>"2001 Toyota Tacoma around $7000 blue or white with less
+							than 100,000 miles"</h4>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+
+	</div>
+
+</div>
+{% endblock body_block %}

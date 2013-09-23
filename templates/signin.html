@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_simple %}
+
+{% block body_block %}
+<div id="account">
+	<div class="shell">
+		<h1>Sign In</h1>
+		<form action="{{ url_for('user.signin') }}" method="post" class="acc-info" novalidate>
+			{{ form.csrf_token }}
+			<div class="row">
+				{{ render_field(form.username, class='field medium') }} 
+			</div>
+			<div class="row">
+			<p>or</p>
+			</div>
+			<div class="row">
+			{{ render_simple(form.email, class="field large", value="" ) }}	
+			</div>
+			
+			
+			<div class="row pass-row">
+				{{ render_field( form.password, class="field") }}
+			</div>
+			<div class="row">
+				{{ render_field( form.submit, class = 'button', value='Sign In') }}
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock body_block %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+{% from "_formhelpers.html" import render_field %}
+<div>
+Here are the results:{{search.count()}}
+<table>
+{% for result in search %}
+	<tr>
+		<td>
+		{{result.found_on|datetimeformat('%d-%m-%Y')}}
+		</td>
+		<td>
+		<a href = {{result.url}}>{{result.url}}</a>
+		</td>
+	</tr>
+{% endfor %}
+</table>
+</div>     
+{% endblock body_block %}

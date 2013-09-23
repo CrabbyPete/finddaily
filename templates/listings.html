@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block js %}
+<script type="text/javascript">
+$(function(){
+			 $('.stars').raty({ path : "{{url_for('static',filename='css/images')}}",
+			                    click: function( score, evt ) { 			                                          
+			                                                     var url = "{{ url_for( 'listings.stars' ) }}" + 
+			                                                                $(this).attr('find') + '/' + score
+			                                                     $.ajax({ url : url });
+			                                                  },
+			                    score: function() { return $(this).attr('data-score'); }
+			                 })
+
+});
+            
+</script>
+{% endblock %}
+
+
+{% block body_block %}
+<div id="listing">
+	<div class="shell">
+		<h1>My Searches</h1>
+
+		<div id="sidebar">
+			<ul>
+			{% for search in searches %}
+				{% if display.pk == search.pk %}
+					<li class="current"><a href="#">{{search.name}}</a></li>
+				{% else %}
+					<li> <a href="{{url_for('listings.landing',search=search.pk, page=0)}}">{{search.name}}</a></li>
+				{% endif %}
+			{% endfor %}
+			</ul>
+			<select class="stylized">
+				{% for search in searches %}
+					<option value="{{url_for('listings.landing',search=search.pk, page=0)}}"
+					{%if search.name == display.name%} selected{%endif%}
+					>{{search.name}}</option>
+				{% endfor %}
+			</select>
+			<a href="{{url_for('landing')}}" class="add">+ add a new search</a>
+		</div>
+
+		<div id="content">
+			<form action="{{url_for('listings.save')}}" method="post" class="options">
+				<input type="hidden" name='search' value='{{display.pk}}' />
+				<div class="search-term">
+					<a href="{{url_for('listings.delete', search = display.pk )}}" class="delete">
+						<img src="{{ url_for( 'static', filename='css/images/ico-delete.png') }}" alt="" width="9" height="25" />
+					</a>
+						
+					<h3><span>{{display.name}}</span> <a href="#" class="edit">edit</a></h3>
+					<input type="text" name ='name' class="field" value="{{display.name}}" />
+					<a href="#" class="save">save</a>
+										
+				</div>
+						
+				<div class="settings">
+	
+					<div class="desc">
+						<h4><span>{{display.search}}</span> <a href="#" class="edit">edit</a></h4>
+						<textarea class="field">{{display.search}}</textarea>
+						<a href="#" class="save">save</a>
+					</div>
+
+					<a href="#" class="settings-link">
+						<span class="icon">
+							<img src="{{url_for( 'static', filename='css/images/ico-settings.png')}}" alt="" width="14" height="29" />
+						</span> Search Settings
+					</a>
+
+					<div class="settings-dd">
+						<span class="arrow"></span>
+
+						<div class="row">
+							<label>Make</label>
+							<select class="makes" href="{{url_for('listings.models')}}" name ='make'>
+								{% for make in makes %}
+								<option {% if make == display.make %} selected{% endif %}>{{make}}</option>
+								{% endfor %}
+							</select>
+	
+							<div class="half right" >
+								<label>Model</label>
+								<select class="models" href="{{url_for('listings.trims')}}" name ='model'>
+									{% for model in models %}
+									<option value = "{{display.make}}&{{model}}" {% if model == display.model %} selected{% endif %}>{{model}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+
+						<div class="row">
+							<label>Trim Package</label>
+							<select class="trims" name ='trim'>
+								{% for trim in trims %}
+								<option {% if trim == display.trim %} selected{% endif %}>{{trim}}</option>
+								{% endfor %}
+							</select>
+							<!--  
+							<input type="text" name = 'trim' class="field" value="{% if display.trim %}{{display.trim}}{% endif %}" />
+							-->
+						</div>
+
+						<div class="row">
+							<label>Years From</label>
+							<input type="text" class="field year" name='year_from' value="{% if display.year_from %}{{display.year_from}}{% endif %}" />
+							<span class="to">to</span>
+							<input type="text" class="field year" name='year_to' value="{% if display.year_to %}{{display.year_to}}{% endif %}" />
+						</div>
+
+						<div class="row">
+							<label>Mileage Limit</label>
+							<input type="text" name = 'mileage' class="field" value="{% if display.mileage_max %}{{display.mileage_max}}{% endif %}" />
+						</div>
+
+						<div class="row">
+							<label>Options</label>
+							<input type="text" name = 'option_1' class="field option" value="" />
+							<input type="text" name = 'option_2' class="field option" value="" />
+							<input type="text" name = 'option_3' class="field option" value="" />
+						</div>
+
+						<div class="row colors">
+							<label>Colors</label>
+							{% if not display.color[0] %}
+								<input type="text" name = 'color_1' class="field color" value="" />
+								<input type="text" name = 'color_2' class="field color" value="" />
+							{% else %}
+								<input type="text" name = 'color_1' class="field color" value="{{display.color[0]}}" />
+								{% if display.color[1] %}
+									<input type="text" name = 'color_2' class="field color" value="{{display.color[1]}}" />
+								{% else %}
+									<input type="text" name = 'color_2' class="field color" value="" />
+								{% endif %}
+							{% endif %}
+						</div>
+
+						<div class="row">
+							<input type="submit" name = 'save' class="button" value="Save Settings" />
+							<input type="reset"  name = 'cancel' class="cancel" value="Cancel" />
+						</div>
+					</div>
+				</div>
+			</form>
+
+			<form action="#" method="get" class="items">
+				<table class="desktop">
+					<tr>
+						<th>You Viewed It</th>
+						<th><a href="{{ url_for( 'listings.sort', search=display.pk, key ='date' ) }}" class="arrow-down right"></a> Found on</th>
+						<th><a href="{{ url_for( 'listings.sort', search=display.pk, key ='rating' ) }}" class="arrow-down right"></a> Rating</th>
+						<th>Searches</th>
+					</tr>
+					{% for find in finds %}
+					{% if not find.trash %} 
+					<tr id='line'>
+						<td>{{find.views}}</td>
+						<td>{{find.found_on.strftime('%b. %d, %Y') }}</td>
+						<td>
+							<span class="stars" data-score="{{find.rating}}" find={{find.pk}}>
+							</span>
+						</td>
+						<td>
+							<div class="btns right">
+								<a href="{{url_for('listings.notes', find = find.pk)}}" class="comment" data-popup>
+									<img src="{{ url_for( 'static', filename='css/images/ico-comment.png') }}" alt="" width="14" height="25" />
+								</a> 
+								<a href="{{url_for('listings.trash', find = find.pk )}}" class="delete">
+									<img src="{{ url_for( 'static', filename='css/images/ico-delete.png') }}" alt="" width="9" height="25" />
+								</a>
+							</div> 
+							<a href="{{url_for('listings.click', find = find.pk )}}">{{find.heading}}</a>
+						</td>
+					</tr>
+					{% endif  %}
+					{% endfor %}
+				</table>
+
+				<div class="mobile">
+					<h5>Searches</h5>
+
+					<p class="sort">Sort by:  
+						<a href="{{ url_for( 'listings.sort', search=display.pk, key ='date' ) }}">Date Found</a>   
+						<a href="{{ url_for( 'listings.sort', search=display.pk, key ='rating' ) }}">Rating</a>
+					</p>
+
+					<ul>
+						{% for find in finds %}
+						{% if not find.trash %} 
+						<li>
+							<span class="stars" data-score="{{find.rating}}" find={{find.pk}}>
+							</span>
+							<h4>
+								<a href="{{url_for('listings.click', find = find.pk )}}">{{find.heading}}</a>
+							</h4>
+							<p>
+								<span class="btns right">
+								<a href="{{url_for('listings.notes', find = find.pk)}}" class="comment" data-popup>
+									<img src="{{ url_for( 'static', filename='css/images/ico-comment.png') }}" alt="" width="14" height="25" />
+								</a> 
+								<a href="{{url_for('listings.trash', find = find.pk )}}" class="delete">
+									<img src="{{ url_for( 'static', filename='css/images/ico-delete.png')}}" alt="" width="9" height="25" />
+								</a>
+								</span> Viewed {{find.views}} times, found on {{find.found_on.strftime('%b. %d, %Y')}}
+							</p>
+						</li>
+						{%endif%}
+						{%endfor%}
+					</ul>
+				</div>
+				
+				{% if pages > 1 %}
+				<nav class="paging">
+					{% if page > 0 %}
+					<a href="{{url_for('listings.landing',search=display.pk, page=page-1)}}" class="prev"><span class="arrow"></span> Prev</a>
+					{% endif %}
+					
+					<span class="current">Showing {{page+1}} of {{pages+1}}</span>
+					
+					{% if page < pages %}
+					<a href="{{url_for('listings.landing',search=display.pk, page=page+1)}}" class="next">Next <span class="arrow"></span></a>
+					{%endif%}
+					 
+				</nav>
+				{% endif %}
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock body_block %}

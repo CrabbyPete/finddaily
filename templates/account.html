@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_simple %}
+{% block body_block %}
+
+<div id="account">
+	<div class="shell">
+		<h1>My Account</h1>
+
+		<form action="{{ url_for('user.account') }}" method="post" class="acc-info" novalidate>
+			{{ form.csrf_token }}
+			<div class="row">
+				<!--  
+				<label>Username</label>
+				<input type="text" class="field medium" value="" />
+				-->
+				{{ render_field(form.username, class='field medium') }}
+			</div>
+
+			<div class="row">
+				<!--  
+				<label>E-Mail</label>
+				<input type="email" class="field large" value="" />
+				-->
+				{{ render_simple(form.email, class="field large" ) }}
+				
+				<label class="checklabel">
+					<input type="checkbox" name="subscribe" class="checkbox" value="" checked="checked" />
+					<!--  {{ form.subscribe( class_ = "checkbox") }} -->
+					Subscribe to Notification emails?
+				</label>
+			</div>
+
+			<div class="row">
+				<!-- 
+				<label>Phone Number</label>
+				<input type="text" class="field medium" value="" pattern="[0-9]*" />
+				 -->
+				{{ render_field(form.phone, class='field medium') }}
+			</div>
+
+			<div class="row pass-row">
+				<!-- 
+				<label>Password</label>
+				<input name ="password" type="password" class="field" value="" />
+				 -->
+				{{ render_field( form.password, class="field") }}
+				<!-- 
+				<input name ="password" type="text" class="field pass-helper" value="" />
+				<a href="#" class="toggle">show</a>
+ 				-->
+ 				{% if account %}
+				<div class="half right">
+					<label>New Password</label>
+					<input type="password" class="field" value="" />
+					<input type="text" class="field pass-helper" value="" />
+
+					<a href="#" class="save">save</a>
+				</div>
+
+				<span class="helper">For new passwords just enter it in the New Password field bove.</span>
+				{% endif %}
+			
+			</div>
+
+			<div class="row">
+				<!--  
+				<label>Full Address</label>
+				<textarea class="field large"></textarea>
+				-->
+				{{ render_field(form.address, class='field large') }}
+			</div>
+
+			<div class="row">
+				<!-- 
+				<input type="submit" class="button" value="Save" />
+				 -->
+				{{ render_field(form.save, class="button", value="Save") }}
+			</div>
+		</form>
+
+		<form action="{{ url_for('user.subscribe') }}" method="post" class="subscribe">
+			<h3>Subscribe for <strong>$3.99 a month</strong></h3>
+
+			<p>To have more than two free searches and to get update emails or phone text message you have to subscribe. Subscriptions are $3.99 a month and you can choose easy ways to pay!</p>
+			{% if subscribed %}
+				<p>Your current expiration date is: {{subscribed.expires.strftime('%b. %d, %Y')}}</p>
+			{% endif %}
+			<div class="row">
+				<label>Subscribe for</label>
+				<input type="text" name="duration" class="field month" value="2" />
+				<span class="txt">months</span>
+			</div>
+
+			<div class="row">
+				<label>Subscribe using</label>
+				<label class="checklabel"><input type="radio" class="radio" name="pay_method" value="paypal" checked="checked" /> Paypal</label>
+				<label class="checklabel"><input type="radio" class="radio" name="pay_method" value="dwolla" /> Dwolla</label>
+				<!--  
+				<label class="checklabel"><input type="radio" class="radio" name="pay_method" value="stripe" /> Stripe</label>
+				<label class="checklabel"><input type="radio" class="radio" name="pay_method" value="creditcard" /> Credit Card</label>
+				<label class="checklabel"><input type="radio" class="radio" name="pay_method" value="bitcoin" /> Bitcoin</label>
+				-->
+			</div>
+
+			<div class="row">
+				<input type="submit" class="button" name='subscribe' value="Subscribe" />
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock body_block %}

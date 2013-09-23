@@ -1,0 +1,10 @@
+<div class="note-popup">
+	<h5>add/edit your note:</h5>
+	<form action="{{url_for('listings.notes', find=find.pk)}}" method='post', class='notes'>
+		<textarea  rows="4" cols="45" name='note'>{{find.notes|safe}}</textarea>
+		<div class="bottom">
+			<a href='#' class="cancel">cancel</a>
+			<input type='submit' name='save' value='save' class='note'/>
+		</div>
+	</form>
+</div>
