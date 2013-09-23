@@ -30,7 +30,7 @@ def load_user(userid):
 def signup():
     """ Signup a new user """
     form = SignUpForm(request.form)
-    if not form.validate_on_submit():
+    if not request.method == 'POST' or not form.validate():
         context = { 'form':form }
         return render_template( 'signup.html', **context )
 
@@ -87,12 +87,8 @@ def account():
     except Subscription.DoesNotExist:
         subscribed = None
     
-    
-    if not form.validate_on_submit():
- 
-        context = { 'form':form,
-                    'subscribed':subscribed 
-                  }
+    if not request.method == 'POST' or not form.validate():
+        context = { 'form':form, 'subscribed':subscribed }
         return render_template( 'account.html', **context )
 
     current_user.username  = form.username.data
@@ -121,41 +117,39 @@ def subscribe():
 def signin():
     """ Login a user 
     """
-    form = LoginForm()
-    if not form.validate_on_submit():
-        context = {'form':form}
-        return render_template( 'signin.html', **context )
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        username = form.username.data
+        email    = form.email.data
+        password = form.password.data
 
-    # POST
-    username = form.username.data
-    email    = form.email.data
-    password = form.password.data
-
-    if username:
-        try:
-            user = User.objects.get( username = username )
-        except User.DoesNotExist:
+        if username:
+            try:
+                user = User.objects.get( username = username )
+            except User.DoesNotExist:
+                form.username.error = 'No such user or password'
+                context = {'form':form}
+                return render_template('signin.html', **context )
+    
+        elif email:
+            try: 
+                user = User.objects.get( email = email )
+            except User.DoesNotExist:
+                form.username.error = 'No such user or password'
+                context = {'form':form}
+                return render_template('signin.html', **context )
+    
+        if user.check_password(password):
+            login_user(user)
+            return redirect('/')
+        else:
             form.username.error = 'No such user or password'
             context = {'form':form}
-            return render_template('signin.html', **context )
-    
-    elif email:
-        try: 
-            user = User.objects.get( email = email )
-        except User.DoesNotExist:
-            form.username.error = 'No such user or password'
-            context = {'form':form}
-            return render_template('signin.html', **context )
-    
-    if user.check_password(password):
-        login_user(user)
-    else:
-        form.username.error = 'No such user or password'
-        context = {'form':form}
-        return render_template('login.html', **context )
+            return render_template('login.html', **context )
 
-    return redirect('/')
-
+    # Not a POST or invalid form
+    context = {'form':form}
+    return render_template( 'signin.html', **context )
 
 @user.route('/logout')
 @login_required

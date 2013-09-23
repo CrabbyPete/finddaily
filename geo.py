@@ -38,7 +38,6 @@ def reverse_geocode(lat,lng):
     zipcode = address = None
     for component in geodat['results']:
         types  = component.get('types', None )
-        print types
         if 'postal_code' in types:
             zipcode = component['address_components'][0]['long_name']
         if 'street_address' in types:
