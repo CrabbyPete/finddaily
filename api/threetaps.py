@@ -1,14 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      Douma
-#
-# Created:     26/11/2012
-# Copyright:   (c) Douma 2012
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-#!/usr/bin/env python
 import requests
 import urllib
 import json
@@ -106,11 +95,11 @@ class ThreeTaps(object):
             args.update(self.location)
         except AttributeError:
             pass
-        
+
         # Make sure it stays ordered
         for k,v in kwargs.items():
             args[k] = v
-            
+
 
         return self.api( 'GET',self.search_url, **args )
 
@@ -183,22 +172,34 @@ def main():
 
     locations = ttap.get_locations('country')
     for local in locations['locations']:
-       # print local
+       #print local
        pass
 
     groups = ttap.get_category_groups()
 
     categories = ttap.get_categories()
 
-    result = ttap.search( source ='CRAIG',
-                          state  = "USA-NJ",
-                          category = 'VAUT',
-                          annotations = {'make':'toyota','model':'tacoma'} )
+    location = {u'lat': 41.0076139, u'long': -74.168981, u'radius': '100mi' }
+    ttap.set_location(**location)
 
-    result = ttap.search(source='CRAIG',heading='Toyota',zipcode="07481")
-    result = ttap.search(source='CRAIG',text="2001 Toyota Tacoma",state="USA-NJ")
-    result = ttap.search(source='CRAIG',text='ferrari')
-    result = ttap.search(source='BKPGE',)
+    kwargs = {'category': 'VAUT',
+              'status': 'offered',
+              'annotations': u'{make:"Ford" AND model:"Bronco"}',
+              'source': 'CRAIG|EBAYM|HMNGS'
+             }
+
+    result = ttap.search(**kwargs)
+
+    result = ttap.search( source ='CRAIG|EBAYM|HMNGS',
+                          category = 'VAUT',
+                          annotations = u'{make:"Ford" AND model:"Bronco"}'  )
+
+    result = ttap.search(source='CRAIG|EBAYM|HMNGS',
+                         heading='Ford Bronco',
+                         category = 'VAUT'
+                         )
+
+
     pass
 
 if __name__ == '__main__':

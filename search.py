@@ -14,7 +14,7 @@ def search_lemonfree( search ):
         if parameter in search:
             kwargs[parameter] = search[parameter]
     kwargs['per_page'] = 100
-     
+
     results = lemonfree.search(**kwargs)
     for result in results:
         if 'link' in result:
@@ -44,7 +44,7 @@ def check_date( search, heading = None, annotation = None ):
         span  = range( search.year_from, search.year_to + 1 )
         if heading:
             words = heading.split(' ')
-                    
+
             for word in words:
                 if word.isdigit() and int(word) >= 1914:
                     if int(word) in span:
@@ -57,7 +57,7 @@ def check_date( search, heading = None, annotation = None ):
                 return True
             else:
                 return False
-        
+
     return True
 
 def search_threetaps( search ):
@@ -70,22 +70,23 @@ def search_threetaps( search ):
     if search.geo:
         location = { 'lat':search.geo[0], 'long':search.geo[1] }
         if search.distance:
-            location['radius'] = '{} mi'.format(search.distance)
+            location['radius'] = '{}mi'.format(search.distance)
         else:
-            location['radius'] = '50 mi'
+            location['radius'] = '50mi'
 
         ttap.set_location(**location)
+
     if search.model:
         annotations = '{make:"%s" AND model:"%s"}'%( search.make, search.model)
     else:
         annotations = '{make:"%s"}'%( search.make )
-    
-    kwargs = dict( source      = 'CRAIG',
-                   status      = 'offered',
+
+    kwargs = dict( source      = 'CRAIG|EBAYM|HMNGS',
+#                   status      = 'offered',
                    category    = 'VAUT',
                    annotations = annotations
                  )
-    
+
     if search.price_min or search.price_max:
         if not search.price_max:
             price = '{}..'.format(search.price_min)
@@ -94,17 +95,17 @@ def search_threetaps( search ):
         kwargs.update( price = price )
 
 
-    heading = None
+    text = False
     for color in search.color:
-        if not heading:
+        if not text:
             color_str = color
-            heading = True
+            text = True
         else:
             color_str += '|'+ color
-    
-    if heading:
-        kwargs['heading'] = color_str
- 
+
+    if text:
+        kwargs['txt'] = color_str
+
     text = None
     for feature in search.features:
         if not text:
@@ -113,7 +114,7 @@ def search_threetaps( search ):
             text += '&{}'.format(feature)
     if text:
         kwargs['text'] = text
-    
+
     while True:
         try:
             print 'Looking'
@@ -122,30 +123,30 @@ def search_threetaps( search ):
         except Exception, e:
             print str(e)
             break
-        
+
         for result in results['postings']:
             if not check_date( search, heading = result['heading'] ):
                 continue
-            
+
             if result['external_id'] in search.finds:
                 continue
-            
+
             found = Found( search     = search,
                            id_string  = result['external_id'],
                            url        = result['external_url'],
                            found_by   = 'craigslist',
                            heading    = result['heading']
                          )
-           
+
             try:
                 found.save()
                 print 'saved'
             except Exception, e:
                 print str(e)
- 
+
             search.finds.append( result['external_id'] )
 
-        # Check if there are more pages or tiers    
+        # Check if there are more pages or tiers
         if results['next_page'] > 0:
             kwargs['page'] = results['next_page']
         else:
@@ -154,15 +155,15 @@ def search_threetaps( search ):
         elif results['next_tier'] > 0:
             results = ttap.search( source='CRAIG',  annotations = annotations, tier = results['next_tier'] )
         """
-    search.save()        
-    return 
+    search.save()
+    return
 
 
 def search_for( search ):
     """ Check all the api's for result """
     search_threetaps( search )
-    search_lemonfree( search )
-    
+    #search_lemonfree( search )
+
 
 def get_searches( user, search ):
     """ Get all the searches for this user
