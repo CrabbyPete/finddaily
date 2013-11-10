@@ -34,6 +34,22 @@ SEARCH_TERMS = [
     'only_deleted'
 ]
 
+class BadArgument(Exception):
+    """ Exeption for not finding any items """
+    pass
+
+class check_params(object):
+
+    def __init__(self, *args):
+        self.args = args
+
+    def __call__(self, f):
+        def wrapped(klass, kwargs):
+            for key in kwargs.keys():
+                if key not in self.args:
+                    raise BadArgument(key)
+            return f(klass, kwargs)
+        return wrapped
 
 
 class ThreeTaps(object):
@@ -132,6 +148,8 @@ class ThreeTaps(object):
                           **kwargs
                        )
 
+
+
     def set_location( self, **location ):
         """ Set location
             location = dict() values =
@@ -183,14 +201,14 @@ def main():
     ttap.set_location(**location)
 
     kwargs = {'category': 'VAUT',
-              'status': 'offered',
+  #            'status': 'offered',
               'annotations': u'{make:"Ford" AND model:"Bronco"}',
-              'source': 'CRAIG|EBAYM|HMNGS'
+              'source': 'CRAIG|CARSD|EBAYM|HMNGS'
              }
 
     result = ttap.search(**kwargs)
 
-    result = ttap.search( source ='CRAIG|EBAYM|HMNGS',
+    result = ttap.search( source ='CARSD',
                           category = 'VAUT',
                           annotations = u'{make:"Ford" AND model:"Bronco"}'  )
 

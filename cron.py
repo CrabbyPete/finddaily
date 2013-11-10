@@ -19,7 +19,9 @@ def search_now():
     for user in User.objects.all():
         searches = Search.objects.filter( user = user.pk )
         for search in searches:
-             search_for( search )
+            if not search.user:
+                continue
+            search_for( search )
 
 if __name__ == '__main__':
     search_now()

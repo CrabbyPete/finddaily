@@ -24,6 +24,7 @@ def normalize(s):
     for p in string.punctuation:
         s = s.replace(p, '')
 
+    s = s.replace(" ", "_")
     return s.lower().strip()
 
 def main():

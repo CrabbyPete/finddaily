@@ -12,8 +12,8 @@ def normalize(s):
     for p in string.punctuation:
         s = s.replace(p, '')
         
+    #s = s.replace(" ", "_")
     return s.lower().strip()
-
 
 
 class CarManager(QuerySet):
@@ -46,6 +46,9 @@ class Model( EmbeddedDocument ):
     model_normal = StringField()
     trims        = ListField( StringField() )
     years        = ListField( IntField() )
+    
+    def __unicode__(self):
+        return self.model
 
 
 class Car ( Document ):
@@ -69,7 +72,7 @@ class Car ( Document ):
            }
     
     def __unicode__(self):
-        return make
+        return self.make
 
 
 """

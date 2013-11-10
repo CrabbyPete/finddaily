@@ -21,7 +21,7 @@ CONDITION  = ('new','used')
 BODYSTYLE  = ('suv','sedan','coupe','truck','minivan','wagon','convertible','hatchback','van','hybrid')
 
 
-MAKES = {car.make_normal:car.make for car in Car.objects()}
+
 MAKESLANG = dict( chevy = 'Chevrolet',  vw   = 'Volkswagen' )
 
 
@@ -43,19 +43,21 @@ def parse_query( data, lati=None, longi=None, user=None ):
         else:
             search.zip = zipcode   
     elif user:
-        if user.location:
-            search.geo = user.location
-        elif user.address:
-            try:
-                location = geocode( address )
-            except Exception, e:
-                print 'Geosearch2 error {}'.format(str(e))
-            else:
-                search.geo = [float(location['lati']), float(location['lngi'])]
+        try:
+            if user.location:
+                search.geo = user.location
+            elif user.address:
+                try:
+                    location = geocode( address )
+                except Exception, e:
+                    print 'Geosearch2 error {}'.format(str(e))
+                else:
+                    search.geo = [float(location['lati']), float(location['lngi'])]
+        except Exception, e:
+            print str(e)
   
  
         
-    
     # Break up the request
     words  = word_tokenize(data)
     #tags   = pos_tag(words)
@@ -67,8 +69,8 @@ def parse_query( data, lati=None, longi=None, user=None ):
     preposition      = None
  
 
-    year        = datetime.today().year + 1
-    for word in words:
+    year = datetime.today().year + 1
+    for w, word in enumerate(words):
 
         # Simplify the tags
         #pos  = simplify_wsj_tag(tag)
@@ -137,9 +139,16 @@ def parse_query( data, lati=None, longi=None, user=None ):
         if word in MAKESLANG:
             word = MAKESLANG[ word ]
             
-        if word in MAKES:
-            search.make = MAKES[word]
         
+        cars = Car.objects( make_normal__startswith = word )
+        for car in cars:
+            if car.make_normal == word:
+                search.make = car.make
+            elif car.make_normal.startswith( word ):
+                make = word + ' ' + words[w+1]
+                if car.make_normal == make:
+                    search.make = car.make
+                
         cars = Car.objects( models__model_normal__startswith = word )
         if len( cars ) == 1:
             search.make = cars[0].make
