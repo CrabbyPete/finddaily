@@ -56,7 +56,8 @@ def geocode(addr):
     if response.ok:
         geodat = json.loads(response.text)
         location = walk( geodat, 'location')
-        return location[1]
+        if location:
+            return location[1]
 
     return None
 

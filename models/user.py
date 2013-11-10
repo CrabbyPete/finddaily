@@ -12,8 +12,9 @@ class PhoneField(StringField):          # Validate phone numbers
     PHONE_REGEX = re.compile(r'1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?')
 
     def validate(self, value):
-        if not PhoneField.PHONE_REGEX.match(value):
-            raise ValidationError('Invalid Phone number: %s' % value)
+        if not value == '':
+            if not PhoneField.PHONE_REGEX.match(value):
+                raise ValidationError('Invalid Phone number: %s' % value)
 
 
 # User Profile, also used for those not signed in
@@ -23,7 +24,7 @@ class User( Document ):
     password	  = StringField(required = True )
     first_name	  = StringField()
     last_name	  = StringField()
-    phone         = PhoneField(default = None)
+    phone         = PhoneField( default = None, required = False)
     address       = StringField(default = None)
     location	  = GeoPointField()
     joined        = DateTimeField( default = datetime.now() )

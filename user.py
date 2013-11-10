@@ -1,10 +1,17 @@
-from flask              import *
-from flask.ext.login    import LoginManager, login_required, login_user, logout_user, current_user
+from flask                  import *
+from flask.ext.login        import ( LoginManager, login_required, login_user,
+                                     logout_user, current_user
+                                   )
 
-from models.user        import User, Subscription
-from forms              import LoginForm, SignUpForm, AccountForm, SubscribeForm, UserForm
-from geo                import geocode
-from payment            import subscription
+from datetime               import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
+from models.user            import User, Subscription
+from forms                  import ( LoginForm, SignUpForm, AccountForm,
+                                     SubscribeForm, UserForm
+                                   )
+from geo                    import geocode
+from payment                import subscription
 
 user = Blueprint( 'user', __name__  )
 
@@ -13,8 +20,8 @@ login_manager = LoginManager()
 def init_user(app):
     login_manager.setup_app(app)
     app.register_blueprint(user)
-    pass  
-    
+    pass
+
 
 @login_manager.user_loader
 def load_user(userid):
@@ -29,18 +36,21 @@ def load_user(userid):
 @user.route('/signup', methods=['GET', 'POST'])
 def signup():
     """ Signup a new user """
+
     form = SignUpForm(request.form)
     if not request.method == 'POST' or not form.validate():
         context = { 'form':form }
         return render_template( 'signup.html', **context )
 
-    username  = form.username.data
-    password  = form.password.data
-    email     = form.email.data
-    phone     = form.phone.data
-    address   = form.address.data
-    subscribe = form.subscribe.data
-    
+    username   = form.username.data
+    password   = form.password.data
+    email      = form.email.data
+    phone      = form.phone.data
+    address    = form.address.data
+    subscribe  = form.subscribe.data
+    duration   = form.duration.data
+    pay_method = form.pay_method.data
+
 
     # Check if they they exist already
     try:
@@ -54,24 +64,35 @@ def signup():
             user.phone         = phone
             user.address       = address
             user.subscribe     = subscribe
-            
+
             user.set_password( password )
-            
+
             try:
                 local = geocode( user.address )
                 user.location = [ float(local['lat']), float(local['lng']) ]
             except Exception, e:
                 pass
-            
+
             try:
                 user.save()
             except Exception, e:
                 print e
+            else:
+                # Place holder until paid subscription enabled
+                if pay_method == 'free':
+                    duration = 2
+                    
+                expires = datetime.today() + relativedelta( months = 2 )
+                subscription = Subscription( user    = user,
+                                             expires = expires,
+                                             active  = True )
+                subscription.save()
+
     else:
         context = { 'error':'User already exists' }
         return render_template( 'signup.html', **context )
-    
-    
+
+
     login_user( user )
     return redirect( '/' )
 
@@ -86,7 +107,7 @@ def account():
         subscribed = Subscription.objects.get( user = current_user.pk )
     except Subscription.DoesNotExist:
         subscribed = None
-    
+
     if not request.method == 'POST' or not form.validate():
         context = { 'form':form, 'subscribed':subscribed }
         return render_template( 'account.html', **context )
@@ -102,7 +123,7 @@ def account():
         current_user.save()
     except Exception, e:
         print str(e)
-        
+
     return redirect( url_for('landing') )
 
 
@@ -111,11 +132,11 @@ def subscribe():
     form = SubscribeForm( request.form )
     url = subscription( form.pay_method.data, form.duration.data )
     return redirect( url )
-    
+
 
 @user.route('/signin', methods=['GET', 'POST'])
 def signin():
-    """ Login a user 
+    """ Login a user
     """
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -130,15 +151,15 @@ def signin():
                 form.username.error = 'No such user or password'
                 context = {'form':form}
                 return render_template('signin.html', **context )
-    
+
         elif email:
-            try: 
+            try:
                 user = User.objects.get( email = email )
             except User.DoesNotExist:
                 form.username.error = 'No such user or password'
                 context = {'form':form}
                 return render_template('signin.html', **context )
-    
+
         if user.check_password(password):
             login_user(user)
             return redirect('/')
@@ -154,7 +175,7 @@ def signin():
 @user.route('/logout')
 @login_required
 def logout():
-    """ Logout a user 
+    """ Logout a user
     """
     logout_user()
     return redirect('/')

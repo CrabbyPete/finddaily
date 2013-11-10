@@ -8,20 +8,30 @@
 # Copyright:   (c) Peter 2013
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-from models.user    import User
+from datetime       import datetime
+from models.user    import User, Subscription
 from models.search  import Search
 from search         import search_for
+
 
 from mongoengine import *
 connect('finddaily')
 
+def clean_up():
+    stale = datetime.today() - timedelta( days = 2 )
+    for search in Search.objects():
+        if not search.user and search.created <= stale:
+            search.delete()
+    
+
 def search_now():
-    for user in User.objects.all():
-        searches = Search.objects.filter( user = user.pk )
-        for search in searches:
-            if not search.user:
-                continue
-            search_for( search )
+    for sub in Subscription.objects.all():
+        if sub.active and datetime.today() <= sub.expires :
+            searches = Search.objects.filter( user = sub.user )
+            for search in searches:
+                if not search.user:
+                    continue
+                search_for( search )
 
 if __name__ == '__main__':
     search_now()

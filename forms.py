@@ -9,6 +9,9 @@ from flask.ext.wtf.html5            import  TelField, EmailField, IntegerField
 from wtforms                        import validators
 from flask.ext.mongoengine.wtf.orm  import model_form
 
+class ValidationError( Exception ):
+    pass
+
 class LoginForm( Form ):
     """ Sign in form """
     username = TextField( u'Username')
@@ -33,7 +36,7 @@ class AccountForm( Form ):
                                        ])
     
     subscribe   = BooleanField(u'',default = True)
-    phone       = TelField(u"Phone Number",[ validate_phone ] )
+    phone       = TelField(u"Phone Number",[ validators.optional(),validate_phone ] )
     password    = PasswordField(u"Password")
     new_passwrd = PasswordField(u"New Password")
     address     = TextField(u"Full Address")

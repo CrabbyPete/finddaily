@@ -81,7 +81,7 @@ def search_threetaps( search ):
     else:
         annotations = '{make:"%s"}'%( search.make )
 
-    kwargs = dict( source      = 'CRAIG|EBAYM|HMNGS',
+    kwargs = dict( source      = 'CRAIG|CARSD|EBAYM|HMNGS',
 #                   status      = 'offered',
                    category    = 'VAUT',
                    annotations = annotations

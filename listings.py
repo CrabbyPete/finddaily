@@ -10,8 +10,10 @@ from forms              import ListingForm
 
 listings = Blueprint( 'listings', __name__ )
 
-MAKE = [car.make for car in Car.objects()]
-print 'Ready'
+# Used to make the settings dropdown faster
+MAKES = [car.make for car in Car.objects().order_by('make')] 
+print "Ready"
+
 
 @listings.route('/landing/', methods = ['GET'])
 @listings.route('/landing/<string:search>/<int:page>',methods=['GET'])
@@ -54,7 +56,7 @@ def landing(search = None, page = 0 ):
                     finds    = finds,
                     page     = page,
                     pages    = len( display.finds )/100,
-                    makes    = MAKE,
+                    makes    = MAKES,
                     models   = models,
                     trims    = trims
                   )
