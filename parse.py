@@ -181,6 +181,6 @@ def parse_query( data, lati=None, longi=None, user=None ):
     except Exception, e:
         print str(e)
 
-    print '{}-{}'.format( search.make, search.model)
+    #print '{}-{}'.format( search.make, search.model)
     return search
 

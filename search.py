@@ -117,9 +117,7 @@ def search_threetaps( search ):
 
     while True:
         try:
-            print 'Looking'
             results = ttap.search( **kwargs )
-            print 'for...'
         except Exception, e:
             print str(e)
             break
@@ -140,7 +138,6 @@ def search_threetaps( search ):
 
             try:
                 found.save()
-                print 'saved'
             except Exception, e:
                 print str(e)
 
