@@ -151,10 +151,13 @@ def parse_query( data, lati=None, longi=None, user=None ):
                 
         cars = Car.objects( models__model_normal__startswith = word )
         if len( cars ) == 1:
-            search.make = cars[0].make
-            model = cars[0].get_model( word )
-            if model:
-                search.model = model.model
+            if not search.make:
+                search.make = cars[0].make
+                
+            if search.make == cars[0].make:
+                model = cars[0].get_model( word )
+                if model:
+                    search.model = model.model
             
         elif len( cars ) > 1 and search.make:
             for car in cars:
