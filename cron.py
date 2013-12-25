@@ -25,10 +25,12 @@ def clean_up():
     
 
 def search_now():
+    today = datetime.now()
     for sub in Subscription.objects.all():
-        if sub.active and datetime.today() <= sub.expires :
-            print "Searching:{}".format( sub.user.username )
+        if sub.active and today <= sub.expires:
+
             searches = Search.objects.filter( user = sub.user )
+            print "Searching {} for {} at {}".format( len(searches), sub.user.username, today.strftime('%Y-%m-%d %H:%M' ) )            
             for search in searches:
                 if not search.user:
                     continue
