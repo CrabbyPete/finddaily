@@ -172,7 +172,7 @@ $(function(){
 									<img src="{{ url_for( 'static', filename='css/images/ico-delete.png') }}" alt="" width="9" height="25" />
 								</a>
 							</div> 
-							<a href="{{url_for('listings.click', find = find.pk )}}">{{find.heading}}</a>
+							<a href="{{url_for('listings.click', find = find.pk )}}" target='_blank'>{{find.heading}}</a>
 						</td>
 					</tr>
 					{% endif  %}

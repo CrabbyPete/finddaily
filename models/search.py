@@ -41,14 +41,17 @@ class Search( Document ):
         return data
     
     def sort_finds(self, method = None ):
+        if not method:
+            return self
+
         if method == 'rating':
             finds = Found.objects.filter(search = self.pk).order_by('-rating')
+            self.sort = 'rating'
         else:
             finds = Found.objects.filter(search = self.pk).order_by('-found_on')
-        
-        self.finds = []
-        for find in finds:
-            self.finds.append( find.id_string)
+            self.sort = 'date'
+
+        self.finds = [ find.id_string for find in finds ]
         self.save()
         return self
     
