@@ -28,7 +28,7 @@ $(function(){
 			{% for search in searches %}
 				{% if display.pk == search.pk %}
 					<li class="current"><a href="#">{{search.name}}</a></li>
-				{% else %}
+				{% elif search.name %}
 					<li> <a href="{{url_for('listings.landing',search=search.pk, page=0)}}">{{search.name}}</a></li>
 				{% endif %}
 			{% endfor %}
