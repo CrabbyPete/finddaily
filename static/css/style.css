@@ -13,7 +13,7 @@ body {
 }
 
 a { color: #00b4ff; text-decoration: none; cursor: pointer; }
-a:hover { color: #008dc8; text-decoration: none; }
+a:hover { color: #002a3c; text-decoration: none; }
 a img { border: 0; }
 
 input, textarea, select { font-size: 12px; font-family: 'Source Sans Pro', arial, sans-serif; color: #373b3d; -webkit-appearance: none; box-shadow: 0 0 0 transparent; }

@@ -45,6 +45,7 @@ def landing(search = None, page = 0 ):
     # Show all the finds for a search
     finds     = []
     range = page * 100
+    display.sort_finds()
     for find in display.finds[ range:range+100 ]:
         try:
             finds.append( Found.objects.get( search = display.pk, id_string = find ) ) 

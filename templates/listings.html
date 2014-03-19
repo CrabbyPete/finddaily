@@ -28,7 +28,7 @@ $(function(){
 			{% for search in searches %}
 				{% if display.pk == search.pk %}
 					<li class="current"><a href="#">{{search.name}}</a></li>
-				{% else %}
+				{% elif search.name %}
 					<li> <a href="{{url_for('listings.landing',search=search.pk, page=0)}}">{{search.name}}</a></li>
 				{% endif %}
 			{% endfor %}
@@ -172,7 +172,7 @@ $(function(){
 									<img src="{{ url_for( 'static', filename='css/images/ico-delete.png') }}" alt="" width="9" height="25" />
 								</a>
 							</div> 
-							<a href="{{url_for('listings.click', find = find.pk )}}">{{find.heading}}</a>
+							<a href="{{url_for('listings.click', find = find.pk )}}" target='_blank'>{{find.heading}}</a>
 						</td>
 					</tr>
 					{% endif  %}

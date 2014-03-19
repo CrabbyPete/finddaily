@@ -31,9 +31,8 @@ def search_now():
             searches = Search.objects.filter( user = sub.user )
             print "Searching {} for {} at {}".format( len(searches), sub.user.username, today.strftime('%Y-%m-%d %H:%M' ) )            
             for search in searches:
-                if not search.user:
-                    continue
-                search_for( search )
+                if search.user:
+                    search_for( search )
 
 if __name__ == '__main__':
     search_now()
