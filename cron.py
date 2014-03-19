@@ -23,7 +23,6 @@ def clean_up():
         if not search.user and search.created <= stale:
             search.delete()
     
-
 def search_now():
     today = datetime.now()
     for sub in Subscription.objects.all():
