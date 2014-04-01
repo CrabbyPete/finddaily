@@ -1,3 +1,5 @@
+from datetime       import datetime
+
 from models.car     import Car
 from models.search  import Search, Found
 from models.user    import User
@@ -133,6 +135,7 @@ def search_threetaps( search ):
                            id_string  = result['external_id'],
                            url        = result['external_url'],
                            found_by   = 'craigslist',
+                           found_on   = datetime.today(),
                            heading    = result['heading']
                          )
 
