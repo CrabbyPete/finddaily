@@ -28,13 +28,24 @@ def landing(search = None, page = 0 ):
     
     if not search:
         if len( searches ) > 0:
-            display = searches[0]
+            for i in xrange( len( searches) ):
+                if searches[i].make:
+                    display = searches[i]
+                    break
+            else:
+                 return redirect( url_for('landing') )
         else:
             return redirect( url_for('landing') )
     else:
         display = Search.objects.get( pk = search )
     
-    make   = Car.objects.get( make = display.make )
+
+    try:
+        make = Car.objects.get( make = display.make )
+    except Car.DoesNotExist:
+        pass
+        
+        
     models = [ model.model for model in make.models]
     model  = make.get_model(display.model)
     trims  = ['Any']
