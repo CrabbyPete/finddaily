@@ -8,7 +8,7 @@
 # Copyright:   (c) Peter 2013
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-from datetime       import datetime
+from datetime       import datetime, timedelta
 from models.user    import User, Subscription
 from models.search  import Search
 from search         import search_for
@@ -21,6 +21,7 @@ def clean_up():
     stale = datetime.today() - timedelta( days = 2 )
     for search in Search.objects():
         if not search.user and search.created <= stale:
+            print "deleting {} for {}".format( search.pk, search.user )
             search.delete()
     
 def search_now():
@@ -36,3 +37,4 @@ def search_now():
 
 if __name__ == '__main__':
     search_now()
+    clean_up()
