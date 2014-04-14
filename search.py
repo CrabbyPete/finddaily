@@ -66,7 +66,11 @@ def check_date( search, heading = None, annotation = None ):
     return True
 
 def mark_deleted( id ):
-    pass
+    finds = Found.objects.filter( id_string = id )
+    for find in finds:
+        find.deleted = True
+        find.save()
+        
 
 def search_threetaps( search ):
     """ Search Craigslist, Ebay classified, and  LIBRE with 3taps
@@ -184,8 +188,9 @@ def search_for( search ):
     """ Check all the api's for result 
     """
     
-    search_threetaps( search )
+    results = search_threetaps( search )
     #search_lemonfree( search )
+    return results
 
 
 def get_searches( user, search ):

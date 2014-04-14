@@ -194,7 +194,11 @@ $(function(){
 							<span class="stars" data-score="{{find.rating}}" find={{find.pk}}>
 							</span>
 							<h4>
-								<a href="{{url_for('listings.click', find = find.pk )}}">{{find.heading}}</a>
+								{% if find.deleted %}
+									<a href="{{url_for('listings.click', find = find.pk )}}" style="color:red">{{find.heading}}</a>
+							    {% else %}
+							    	<a href="{{url_for('listings.click', find = find.pk )}}" >{{find.heading}}</a>
+								{% endif %}
 							</h4>
 							<p>
 								<span class="btns right">

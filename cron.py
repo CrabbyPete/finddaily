@@ -39,7 +39,10 @@ def search_now():
             for search in searches:
                 if search.user:
                     finds = search_for( search )
-                    found.update( finds )
+                    if finds:
+                        for find in finds:
+                            print "Found {}".format(find)
+                        found.extend( finds )
 
 if __name__ == '__main__':
     search_now()
