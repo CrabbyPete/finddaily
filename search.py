@@ -42,6 +42,9 @@ def search_lemonfree( search ):
 
 
 def check_date( search, heading = None, annotation = None ):
+    """ Check if date is within search parameters by date in title heading 
+    """
+    
     if search.year_from:
         span  = range( search.year_from, search.year_to + 1 )
         if heading:
@@ -62,12 +65,14 @@ def check_date( search, heading = None, annotation = None ):
 
     return True
 
+def mark_deleted( id ):
+    pass
+
 def search_threetaps( search ):
-    """
-    Search Craigslist, Ebay classified, and  LIBRE with 3taps
+    """ Search Craigslist, Ebay classified, and  LIBRE with 3taps
     """
     ttap = ThreeTaps()
-    retvals = 'source,category,category_group,location,external_id,external_url,heading,annotations'
+    retvals = 'source,category,category_group,location,external_id,external_url,heading,annotations,expires,deleted'
 
     if search.geo:
         location = { 'lat':search.geo[0], 'long':search.geo[1] }
@@ -86,7 +91,8 @@ def search_threetaps( search ):
     kwargs = dict( source      = 'CRAIG|CARSD|EBAYM|HMNGS',
 #                   status      = 'offered',
                    category    = 'VAUT',
-                   annotations = annotations
+                   annotations = annotations,
+                   retvals     = retvals
                  )
 
     if search.price_min or search.price_max:
@@ -117,6 +123,8 @@ def search_threetaps( search ):
     if text:
         kwargs['text'] = text
 
+    # Do the search, keep processing as long as results available
+    found_now = []
     while True:
         try:
             results = ttap.search( **kwargs )
@@ -125,10 +133,21 @@ def search_threetaps( search ):
             break
 
         for result in results['postings']:
+            
+            # Is the date in the heading what we want?
             if not check_date( search, heading = result['heading'] ):
                 continue
+            
 
+            # Do I already have this?
             if result['external_id'] in search.finds:
+                
+                 # Has this been deleted?
+                if result['deleted']:
+                    mark_deleted( result['external_id'] )
+                continue
+            
+            elif result['deleted']:
                 continue
 
             found = Found( search     = search,
@@ -136,7 +155,8 @@ def search_threetaps( search ):
                            url        = result['external_url'],
                            found_by   = 'craigslist',
                            found_on   = datetime.today(),
-                           heading    = result['heading']
+                           heading    = result['heading'],
+                           expires    = datetime.fromtimestamp( result['expires'] ) 
                          )
 
             try:
@@ -145,6 +165,7 @@ def search_threetaps( search ):
                 print str(e)
 
             search.finds.append( result['external_id'] )
+            found_now.append( result['external_id'] )
 
         # Check if there are more pages or tiers
         if results['next_page'] > 0:
@@ -156,11 +177,13 @@ def search_threetaps( search ):
             results = ttap.search( source='CRAIG',  annotations = annotations, tier = results['next_tier'] )
         """
     search.save()
-    return
+    return found_now
 
 
 def search_for( search ):
-    """ Check all the api's for result """
+    """ Check all the api's for result 
+    """
+    
     search_threetaps( search )
     #search_lemonfree( search )
 

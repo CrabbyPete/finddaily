@@ -36,11 +36,14 @@ class Search( Document ):
     
     @queryset_manager
     def related(doc_cls, queryset, user):
-        """ Get all searchs for a user """
+        """ Get all searchs for a user 
+        """
         data = queryset.filter( user = user )
         return data
     
     def sort_finds(self, method = None ):
+        """ Sort the find by method ratings or date found
+        """
         if not method:
             return self
 
@@ -55,7 +58,6 @@ class Search( Document ):
         self.save()
         return self
     
-
     meta = { 'indexes' : ['make', 'model','user'] }
 
     def unicode(self):
@@ -74,6 +76,7 @@ class Found( Document ):
     trash           = BooleanField( default = False )
     notes           = StringField( default = "" )
     views           = IntField( default = 0)
+    expires         = DateTimeField()
 
     @queryset_manager
     def ordered(doc_cls, queryset, search):
