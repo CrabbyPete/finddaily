@@ -54,15 +54,9 @@ def landing(search = None, page = 0 ):
             trims.append(trim)
 
     # Show all the finds for a search
-    finds     = []
-    range = page * 100
     display.sort_finds()
-    for find in display.finds[ range:range+100 ]:
-        try:
-            finds.append( Found.objects.get( search = display.pk, id_string = find ) ) 
-        except Exception, e:
-            print str(e)                                              
- 
+    finds = display.get_finds( page, 100 )
+
     context = dict( display  = display,
                     searches = searches,
                     finds    = finds,
@@ -181,8 +175,7 @@ def trash( find = None ):
     """ Ajax call to trash a particular find
     """
     found = Found.objects.get( pk = find )
-    found.trash = True
-    found.save()
+    found.delete()
     
     return "",204   
 

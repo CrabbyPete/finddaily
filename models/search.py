@@ -3,6 +3,45 @@ from datetime 					import datetime
 from mongoengine 				import *
 from user                       import User
     
+
+class Found( Document ):
+    id_string       = StringField()
+    heading         = StringField()
+    search          = ReferenceField( 'Search' )
+    url             = URLField()
+    found_by        = StringField()
+    found_on        = DateTimeField( default = datetime.now() )
+    rating          = IntField( default = 1 )
+    good            = BooleanField( default = True  )
+    trash           = BooleanField( default = False )
+    notes           = StringField( default = "" )
+    views           = IntField( default = 0)
+    expires         = DateTimeField()
+
+    @queryset_manager
+    def ordered(doc_cls, queryset, search):
+        if search.sort == 'date':
+            search.finds = queryset.filter( search = search ).order_by( '-found_on')
+        else:
+            search.finds = queryset.filter( search = search ).order_by( '-rating' )
+        search.save()
+        return search.finds
+    
+    @queryset_manager
+    def related(doc_cls, queryset, search):
+         results = queryset.filter( search = search ).only( 'id_string' )
+         data = [ result.id_string for result in results ]
+         return data
+    
+
+    def __unicode__(self):
+        return self.heading
+
+    meta = { 'indexes'  : ['search', 'id_string']
+           }
+
+ 
+    
 class Search( Document ):
     """ Describes what someone is looking for
     """
@@ -31,7 +70,7 @@ class Search( Document ):
     created         = DateTimeField( default = datetime.now() )
     sort            = StringField( default = 'date' )
     anchor          = StringField()
-    finds           = ListField()
+    finds           = ListField( ReferenceField(Found,reverse_delete_rule = PULL)  )
 
     
     @queryset_manager
@@ -41,6 +80,39 @@ class Search( Document ):
         data = queryset.filter( user = user )
         return data
     
+    def add_find(self, found ):
+        """ Add a find to the find list
+        """
+        self.finds.append( found )
+        self.save()
+        return self.finds
+    
+    def delete_find(self, found ):
+        """ Delete a find in this search
+        """
+        #self.finds.remove( found )
+        self.update(pull__finds = found )
+        self.save()
+        found.delete()
+        return self.finds
+    
+    def has_find( self, id ):
+        """ Look for a find by its id_string
+        """
+        try:
+            found = Found.objects.get(search = self, id_string = id )
+        except DoesNotExist:
+            return None
+        return found
+    
+    def get_finds(self, page = 0, page_size = 100 ):
+        if not page_size:
+            page_size = len(self.finds)
+            
+        range = page * page_size
+        return self.finds[ range:range + page_size ]
+
+            
     def sort_finds(self, method = None ):
         """ Sort the find by method ratings or date found
         """
@@ -60,41 +132,7 @@ class Search( Document ):
     
     meta = { 'indexes' : ['make', 'model','user'] }
 
-    def unicode(self):
+    def __unicode__(self):
         return self.search
 
 
-class Found( Document ):
-    id_string       = StringField()
-    heading         = StringField()
-    search          = ReferenceField( Search , reverse_delete_rule = CASCADE)
-    url             = URLField()
-    found_by        = StringField()
-    found_on        = DateTimeField( default = datetime.now() )
-    rating          = IntField( default = 1 )
-    good            = BooleanField( default = True  )
-    trash           = BooleanField( default = False )
-    notes           = StringField( default = "" )
-    views           = IntField( default = 0)
-    expires         = DateTimeField()
-
-    @queryset_manager
-    def ordered(doc_cls, queryset, search):
-        if search.sort == 'date':
-            search.finds = queryset.filter( search = search ).order_by( '-found_on')
-        else:
-            search.finds = queryset.filter( search = search ).order_by( '-rating' )
-        search.save()
-        return search.finds
-    
-    @queryset_manager
-    def related(doc_cls, queryset, search):
-         results = queryset.filter( search = search ).only( 'id_string' )
-         data = [ result.id_string for result in results ]
-         return data
-    
-    def save(self):
-        return super(Found, self).save()
-    
-    meta = { 'indexes'  : ['search', 'id_string']
-           }

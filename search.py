@@ -33,7 +33,7 @@ def search_lemonfree( search ):
 
             try:
                 found.save()
-                search.finds.append( result['id'] )
+                search.add_find( found )
             except Exception, e:
                 print str(e)
 
@@ -65,12 +65,6 @@ def check_date( search, heading = None, annotation = None ):
 
     return True
 
-def mark_deleted( id ):
-    finds = Found.objects.filter( id_string = id )
-    for find in finds:
-        find.deleted = True
-        find.save()
-        
 
 def search_threetaps( search ):
     """ Search Craigslist, Ebay classified, and  LIBRE with 3taps
@@ -144,11 +138,13 @@ def search_threetaps( search ):
             
 
             # Do I already have this?
-            if result['external_id'] in search.finds:
+            found = search.has_find( result['external_id'] )
+            if found:
                 
                  # Has this been deleted?
                 if result['deleted']:
-                    mark_deleted( result['external_id'] )
+                    found.deleted = True
+                    found.save()       
                 continue
             
             elif result['deleted']:
@@ -168,8 +164,8 @@ def search_threetaps( search ):
             except Exception, e:
                 print str(e)
 
-            search.finds.append( result['external_id'] )
-            found_now.append( result['external_id'] )
+            search.add_find( found )
+            found_now.append( found )
 
         # Check if there are more pages or tiers
         if results['next_page'] > 0:
