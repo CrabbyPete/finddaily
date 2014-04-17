@@ -41,7 +41,7 @@ class Found( Document ):
            }
 
  
-    
+
 class Search( Document ):
     """ Describes what someone is looking for
     """
@@ -87,15 +87,6 @@ class Search( Document ):
         self.save()
         return self.finds
     
-    def delete_find(self, found ):
-        """ Delete a find in this search
-        """
-        #self.finds.remove( found )
-        self.update(pull__finds = found )
-        self.save()
-        found.delete()
-        return self.finds
-    
     def has_find( self, id ):
         """ Look for a find by its id_string
         """
@@ -129,10 +120,17 @@ class Search( Document ):
         self.finds = [ find.id_string for find in finds ]
         self.save()
         return self
-    
+
+    def delete(self, *args, **kwargs ):
+        """ delete all the finds associated with this search first
+        """
+        for find in self.finds:
+            find.delete()
+            
+        return super(Search, self).delete( *args, **kwargs )
+            
     meta = { 'indexes' : ['make', 'model','user'] }
 
     def __unicode__(self):
         return self.search
-
 

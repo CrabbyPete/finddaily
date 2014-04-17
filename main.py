@@ -39,6 +39,7 @@ def landing():
     if request.method == 'POST' and form.validate():
         search = parse_query( form.query.data, form.latitude.data, form.longitude.data, current_user )
         if not search.make:
+            search.delete()
             form.query.errors = ["Unknown make or model"]
             context = {'user':current_user, 'form':form }
             return render_template( 'landing.html', **context )

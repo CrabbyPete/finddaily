@@ -211,6 +211,7 @@ article .underline { text-decoration: underline; }
 
 .acc-info { width: 100%; padding: 0 0 34px; }
 .acc-info .row { width: 622px; height: 29px; }
+.acc-info .row .error {float:left; }
 .acc-info .row p { padding-left: 100px; padding-top: 10px;}
 .acc-info .row label.checklabel { line-height: 29px; width: auto; text-align: left; margin: 0 0 0 16px; font-weight: 300; }
 .acc-info .custom-checkbox { margin-top: 8px; }
@@ -253,7 +254,7 @@ label:hover .custom-radio img { top: -32px; }
 .error .field { color: #ff0000 !important; }
 .error .field { border-color: #ff0000 !important; }
 
-.error-msg { font-size: 13px; line-height: 29px; color: #ff0000 !important; }
+.error-msg { font-size: 13px; color: #ff0000 !important; }
 
 .field { background: #fff; border: 1px solid #fff; font-size: 13px; line-height: 19px; height: 19px; padding: 5px 10px; display: block; color: #373b3d; border-radius: 3px; }
 .field:disabled { background: #fff !important; border-color: #fff !important; color: #cacaca !important; }

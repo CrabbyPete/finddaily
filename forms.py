@@ -12,7 +12,7 @@ from flask.ext.mongoengine.wtf.orm  import model_form
 class ValidationError( Exception ):
     pass
 
-class LoginForm( Form ):
+class SignInForm( Form ):
     """ Sign in form """
     username = TextField( u'Username')
     email    = TextField( u"Email" )

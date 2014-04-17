@@ -7,7 +7,7 @@ from datetime               import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from models.user            import User, Subscription
-from forms                  import ( LoginForm, SignUpForm, AccountForm,
+from forms                  import ( SignInForm, SignUpForm, AccountForm,
                                      SubscribeForm, UserForm
                                    )
 from geo                    import geocode
@@ -112,13 +112,12 @@ def account():
         context = { 'form':form, 'subscribed':subscribed }
         return render_template( 'account.html', **context )
 
-    current_user.username  = form.username.data
-    current_user.password  = form.password.data
-    current_user.email     = form.email.data
-    current_user.phone     = form.phone.data
-    current_user.address   = form.address.data
-    current_user.subscribe = form.subscribe.data
-
+    if form.username.data : current_user.username  = form.username.data  
+    if form.email.data    : current_user.email     = form.email.data     
+    if form.phone.data    : current_user.phone     = form.phone.data     
+    if form.address.data  : current_user.address   = form.address.data   
+    if form.subscribe.data: current_user.subscribe = form.subscribe.data
+    if form.password.data : current_user.set_password( form.password.data )
     try:
         current_user.save()
     except Exception, e:
@@ -138,7 +137,7 @@ def subscribe():
 def signin():
     """ Login a user
     """
-    form = LoginForm(request.form)
+    form = SignInForm(request.form)
     if request.method == 'POST' and form.validate():
         username = form.username.data
         email    = form.email.data
@@ -148,7 +147,7 @@ def signin():
             try:
                 user = User.objects.get( username = username )
             except User.DoesNotExist:
-                form.username.error = 'No such user or password'
+                form.username.errors = ['No such user or password']
                 context = {'form':form}
                 return render_template('signin.html', **context )
 
@@ -156,17 +155,21 @@ def signin():
             try:
                 user = User.objects.get( email = email )
             except User.DoesNotExist:
-                form.username.error = 'No such user or password'
+                form.username.errors = ['No such user or password']
                 context = {'form':form}
                 return render_template('signin.html', **context )
+        else:
+            form.username.errors = ['Enter a Username or Email address']
+            context = {'form':form}
+            return render_template('signin.html', **context )
 
         if user.check_password(password):
             login_user(user)
             return redirect('/')
         else:
-            form.username.error = 'No such user or password'
+            form.username.errors = ['No such user or password']
             context = {'form':form}
-            return render_template('login.html', **context )
+            return render_template('signin.html', **context )
 
     # Not a POST or invalid form
     context = {'form':form}
