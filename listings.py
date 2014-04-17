@@ -175,7 +175,8 @@ def trash( find = None ):
     """ Ajax call to trash a particular find
     """
     found = Found.objects.get( pk = find )
-    found.delete()
+    found.trash = True
+    found.save()
     
     return "",204   
 

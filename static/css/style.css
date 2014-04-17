@@ -86,7 +86,7 @@ article .underline { text-decoration: underline; }
 #listing #sidebar li a { color: #373b3d; }
 #listing #sidebar li.current a,
 #listing #sidebar li a:hover { color: #373b3d; font-weight: 600; }
-#listing #sidebar .add { font-size: 10px; font-weight: 400; }
+#listing #sidebar .add { font-size: 15px; font-weight: 400; }
 #listing #sidebar .c2-sb-wrap,
 #listing #sidebar .chosen-container,
 #listing #sidebar select { display: none; }
