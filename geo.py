@@ -62,6 +62,7 @@ def geocode(addr):
     return None
 
 if __name__ == '__main__':
+    reply = geocode('07481')
     reply = geocode( '280 Monroe Ave, Wyckoff NJ 07481')
     reply = reverse_geocode(reply['lat'],reply['lng'] )
     pass

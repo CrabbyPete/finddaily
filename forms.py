@@ -78,3 +78,5 @@ class ListingForm( Form):
     years_from  = TextField()
     years_to    = TextField()
     mileage     = TextField()
+    miles       = IntegerField()
+    zipcode     = TextField()

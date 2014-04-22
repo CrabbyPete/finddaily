@@ -4,12 +4,12 @@ from decimal            import Decimal
 from nltk               import word_tokenize, pos_tag, ne_chunk
 #from nltk.tag.simplify  import simplify_wsj_tag
 
-from geo            import reverse_geocode,walk
+from geo            import geocode, reverse_geocode, walk
 
 from models.car     import Car, normalize
 from models.search  import Search, Found
 from models.user    import User
-
+from log            import log
 
 
 SPECIALS  = {'P':('under', 'over', 'less', 'more','about','around','near', 'for', 'between','from','within', 'in', 'to', '-'),
@@ -39,22 +39,19 @@ def parse_query( data, lati=None, longi=None, user=None ):
         try:
             address,zipcode = reverse_geocode(lati,longi)
         except Exception, e:
-            print "Geosearch error {}".format( str(e) )
+            log(  "Geosearch error {}".format( str(e) ) )
         else:
             search.zip = zipcode   
     elif user:
-        try:
-            if user.location:
-                search.geo = user.location
-            elif user.address:
-                try:
-                    location = geocode( address )
-                except Exception, e:
-                    print 'Geosearch2 error {}'.format(str(e))
-                else:
-                    search.geo = [float(location['lati']), float(location['lngi'])]
-        except Exception, e:
-            print str(e)
+        if not user.is_anonymous():
+            try:
+                if user.location:
+                    search.geo = user.location
+                elif user.address:
+                    location = geocode( user.address )
+                    search.geo = [float(location['lat']), float(location['lng'])]
+            except Exception, e:
+                log ( 'User geo error {}'.format( str(e) ) )
   
  
         
@@ -182,7 +179,7 @@ def parse_query( data, lati=None, longi=None, user=None ):
     try:
         search.save()
     except Exception, e:
-        print str(e)
+        log ("Search Save Exception: {}".format( str(e)) )
 
     #print '{}-{}'.format( search.make, search.model)
     return search

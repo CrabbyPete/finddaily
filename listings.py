@@ -37,9 +37,8 @@ def landing(search = None, page = 0 ):
         else:
             return redirect( url_for('landing') )
     else:
-        display = Search.objects.get( pk = search )
+        display = Search.objects.get( pk = search ).select_related()
     
-
     try:
         make = Car.objects.get( make = display.make )
     except Car.DoesNotExist:
@@ -54,7 +53,6 @@ def landing(search = None, page = 0 ):
             trims.append(trim)
 
     # Show all the finds for a search
-    display.sort_finds()
     finds = display.get_finds( page, 100 )
 
     context = dict( display  = display,
@@ -74,7 +72,8 @@ def sort( search = None, key= None ):
     """ Sort by date or stars 
     """
     search = Search.objects.get( pk = search )
-    search.sort_finds(key)
+    search.sort = key
+    search.save()
     return redirect( url_for('listings.landing',search=search.pk, page=0) ) 
 
 @listings.route('/save', methods = ['POST'])
@@ -142,10 +141,16 @@ def save():
     if form['option_1'] or form['option_2'] or form['option_3']:
         pass
 
+    if form['zipcode'] or form['miles']:
+        if not search.zip == form['zipcode'] or not search.distance == form['miles']:
+            search.set_location( form['zipcode'], form['miles'] )
+            search.delete_finds()
+            change = True
+            
     if change:
         search_for( search )
         
-    return redirect( url_for('listings.landing',search=search.pk) )    
+    return redirect( url_for('listings.landing', search=search.pk, page=0) )    
     
 
 @listings.route('/click/<string:find>',methods=['GET'])

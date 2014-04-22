@@ -1,6 +1,7 @@
 import requests
 import urllib
 import json
+import time
 
 from collections    import OrderedDict
 
@@ -53,6 +54,8 @@ class check_params(object):
 
 
 class ThreeTaps(object):
+    """ API interface to 3Taps
+    """
 
     search_url     = 'http://search.3taps.com'
     reference_url  = 'http://reference.3taps.com'
@@ -109,7 +112,7 @@ class ThreeTaps(object):
         args = OrderedDict()
         try:
             args.update(self.location)
-        except AttributeError:
+        except ( AttributeError, TypeError ):
             pass
 
         # Make sure it stays ordered
@@ -118,6 +121,20 @@ class ThreeTaps(object):
 
 
         return self.api( 'GET',self.search_url, **args )
+
+    @success
+    def poll( self, **kwargs ):
+        """
+        args = dict( timestamp = long( time.mktime( time.localtime() ) ) )
+        return self.api( 'GET',self.polling_url+'/anchor', **args )
+        """
+        args = OrderedDict()
+
+        # Make sure it stays ordered
+        for k,v in kwargs.items():
+            args[k] = v
+
+        return self.api( 'GET',self.polling_url+'/poll', **args )
 
 
     @success
@@ -183,12 +200,13 @@ class ThreeTaps(object):
         self.category = category
 
 
+
 def main():
     ttap = ThreeTaps()
 
     sources = ttap.get_sources()
 
-    locations = ttap.get_locations('country')
+    locations = ttap.get_locations('state')
     for local in locations['locations']:
        #print local
        pass
@@ -206,7 +224,10 @@ def main():
               'source': 'CRAIG|CARSD|EBAYM|HMNGS'
              }
 
+    location = {}
     result = ttap.search(**kwargs)
+
+    result = ttap.poll( **kwargs )
 
     result = ttap.search( source ='CARSD',
                           category = 'VAUT',

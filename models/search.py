@@ -2,7 +2,7 @@
 from datetime 					import datetime
 from mongoengine 				import *
 from user                       import User
-    
+from geo                        import geocode    
 
 class Found( Document ):
     id_string       = StringField()
@@ -35,7 +35,7 @@ class Found( Document ):
     
 
     def __unicode__(self):
-        return self.heading
+        return '<Found:{}>'.format(self.heading)
 
     meta = { 'indexes'  : ['search', 'id_string']
            }
@@ -80,12 +80,6 @@ class Search( Document ):
         data = queryset.filter( user = user )
         return data
     
-    def add_find(self, found ):
-        """ Add a find to the find list
-        """
-        self.finds.append( found )
-        self.save()
-        return self.finds
     
     def has_find( self, id ):
         """ Look for a find by its id_string
@@ -101,14 +95,14 @@ class Search( Document ):
             page_size = len(self.finds)
             
         range = page * page_size
-        return self.finds[ range:range + page_size ]
+        return self.finds[ range:range + page_size ] 
 
             
     def sort_finds(self, method = None ):
         """ Sort the find by method ratings or date found
         """
         if not method:
-            return self
+            method = self.sort
 
         if method == 'rating':
             finds = Found.objects.filter(search = self.pk).order_by('-rating')
@@ -117,20 +111,47 @@ class Search( Document ):
             finds = Found.objects.filter(search = self.pk).order_by('-found_on')
             self.sort = 'date'
 
-        self.finds = [ find.id_string for find in finds ]
-        self.save()
-        return self
+        # This causes the finds to be DeReferenced 
+        self.finds = [ find for find in finds ]
+        return self.finds
 
+    def set_location(self, zip, miles = None ):
+        self.zip = zip
+        if miles:
+            if miles == 'unlimited':
+                del self.geo
+                self.save()
+                return None
+            else:
+                self.distance = miles
+        
+        try:
+            location = geocode( zip )
+            self.geo = [ float(location['lat']), float(location['lng']) ]
+        except Exception, e:
+            return None
+    
+        self.save()
+        return self.geo
+
+    def delete_finds(self):
+        for find in self.finds:
+            find.delete()
+            
+    def save(self, *args, **kwargs):
+        self.sort_finds()
+        super(Search, self).save( *args, **kwargs )
+    
     def delete(self, *args, **kwargs ):
         """ delete all the finds associated with this search first
         """
         for find in self.finds:
             find.delete()
-            
+        
         return super(Search, self).delete( *args, **kwargs )
             
     meta = { 'indexes' : ['make', 'model','user'] }
 
     def __unicode__(self):
-        return self.search
+        return '<Search:{}>'.format(self.search)
 

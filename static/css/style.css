@@ -158,6 +158,7 @@ article .underline { text-decoration: underline; }
 #listing .settings .row .field.color { width: 58px; }
 #listing .settings .row .half label { width: 60px; }
 #listing .settings .row .to { float: left; font-size: 13px; line-height: 29px; text-align: center; width: 27px; }
+#listing .settings .row .within { float: left; font-size: 13px; line-height: 29px; text-align: center; width: 100px;  }
 #listing .settings .button { float: left; margin-left: 120px; }
 #listing .settings .cancel { background: transparent; border: 0 none; font-size: 13px; height: 29px; float: left; cursor: pointer; margin-left: 14px; }
 #listing .settings .cancel:hover { color: #00b4ff; }

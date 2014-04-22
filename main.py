@@ -8,7 +8,7 @@ from flask.ext.login        import current_user
 from forms                  import SearchForm
 from parse                  import parse_query
 from search                 import search_for
-
+from config                 import SECRET_KEY
 
 # Blueprint apps
 from user                   import user, init_user
@@ -18,7 +18,7 @@ from payment                import payment
 from models.search          import Found
 
 app = Flask(__name__)
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+app.secret_key = SECRET_KEY
 
 # Initialize the user so you can add it to the blueprint
 init_user( app )
@@ -33,7 +33,7 @@ def datetimeformat(value, format='%H:%M / %d-%m-%Y'):
 @app.route('/', methods=['GET', 'POST'])
 def landing():
     """ Landing page """
-    
+
     form = SearchForm(request.form)
 
     if request.method == 'POST' and form.validate():

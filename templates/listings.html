@@ -137,6 +137,17 @@ $(function(){
 								{% endif %}
 							{% endif %}
 						</div>
+						<div class="row">
+							<label>Within</label>
+							<input type="text" name = 'miles' class="field color"
+							{% if display.geo %}
+							 value="{{display.distance}}" />
+							{% else %}
+							 value="unlimited" />
+							{% endif %}
+							<span class="within">miles of zipcode</span>
+							<input type="text" name = 'zipcode' class="field color" value="{{display.zip}}" />
+						</div>
 
 						<div class="row">
 							<input type="submit" name = 'save' class="button" value="Save Settings" />
