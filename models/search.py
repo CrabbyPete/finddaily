@@ -134,8 +134,10 @@ class Search( Document ):
         self.save()
         return self.geo
 
-    def delete_finds(self):
+    def delete_finds(self, keep_notes = False ):
         for find in self.finds:
+            if keep_notes and len( find.notes ) > 0:
+                continue
             find.delete()
             
     def save(self, *args, **kwargs):

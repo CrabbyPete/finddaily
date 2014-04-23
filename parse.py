@@ -117,16 +117,18 @@ def parse_query( data, lati=None, longi=None, user=None ):
 
         if word == 'anywhere':
             search.geo = None
+            continue
 
         # Handle adjective
         if word in COLORS:
             search.color.append( word )
+            continue
 
         if word in CONDITION:
             search.condition = word
 
         if word in BODYSTYLE:
-            search.bodystyle = wor
+            search.bodystyle = word
 
         if word in SPECIALS['P']:
             preposition = word

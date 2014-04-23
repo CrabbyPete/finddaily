@@ -80,7 +80,7 @@ class SearchThreeTaps():
     def start_search(self, search ):
         """ Search Craigslist, Ebay classified, and  LIBRE with 3taps
         """
-        retvals = 'source,category,category_group,location,external_id,external_url,heading,annotations,expires,deleted'
+        retvals = 'source,category,category_group,location,external_id,external_url,heading,body,annotations,expires,deleted'
 
  
         self.set_location(search)
@@ -114,7 +114,7 @@ class SearchThreeTaps():
                 color_str += '|'+ color
 
         if text:
-            kwargs['txt'] = color_str
+            kwargs['text'] = color_str
 
         # Check any specific features 
         text = None
@@ -146,13 +146,16 @@ class SearchThreeTaps():
                 break
 
             for result in results['postings']:
-                count += 1
             
                 # Is the date in the heading what we want?
                 if not self.check_date( search, result['heading'] ):
                     continue
             
-
+                annotations = result['annotations']
+                if 'make' in annotations and not annotations['make'] == search['make']:
+                    print 'Wrong make {}'.format(annotations['make'])
+                
+                count += 1
                 # Do I already have this?
                 found = search.has_find( result['external_id'] )
                 if found:

@@ -86,7 +86,9 @@ $(function(){
 								<label>Model</label>
 								<select class="models" href="{{url_for('listings.trims')}}" name ='model'>
 									{% for model in models %}
-									<option value = "{{display.make}}&{{model}}" {% if model == display.model %} selected{% endif %}>{{model}}</option>
+									<option value = "{{display.make}}&{{model}}" 
+									{% if model == display.model or not display.model and model == 'Any'%} selected {% endif %}>
+									{{model}}</option>
 									{% endfor %}
 								</select>
 							</div>

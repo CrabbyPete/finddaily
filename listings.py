@@ -46,6 +46,8 @@ def landing(search = None, page = 0 ):
         
         
     models = [ model.model for model in make.models]
+    models.insert(0, 'Any')
+    
     model  = make.get_model(display.model)
     trims  = ['Any']
     if model:
@@ -91,18 +93,27 @@ def save():
         search.name = form['name']
         change = True
     
-    make   = form['make']
-    model  = form['model'].split('&')
-    model = model[1]
-
+    make  = form['make']
+    
+    # Model comes back as make&model
+    model = form['model'].split('&')[1]
+    if model == 'Any':
+        model = None
+ 
     trim  = form['trim']
     
-    if not make == search.make or not model == search.model:
-        car = Car.objects.make_model( make, model )
-        if car:
-            search.make = make
-            search.model = model
-            change = True
+    if not make == search.make:
+        search.make = make
+        change = True
+         
+    if not model == search.model:
+        if not model:
+            search.model = None
+        else:
+            car = Car.objects.make_model( make, model )
+            if car:
+                search.model = model
+        change = True
             
     if not trim == search.trim:
         search.trim = trim
@@ -112,7 +123,7 @@ def save():
         search.year_from = int( form['year_from'])
         change = True
 
-    if form['year_to'] and not form['year_to'] == search.year_to:
+    if form['year_to'] and not int( form['year_to'] ) == search.year_to:
         search.year_to = int( form['year_to'])
         change = True
 
@@ -123,28 +134,24 @@ def save():
             search.mileage_max = int( form['milage'] )
             change = True
         
-    if form['color_1'] or form['color_2']:
-        colors = search.color
-        if form['color_1']:
-            if not form['color_1'] in search.color:
-                search.color.append( form['color_1'] )
-                change = True
-        if form['color_2']:
-            if not form['color_2'] in search.color:
-                search.color.append( form['color_2'] )
-                change = True
-        for color in colors:
-            if not color == form['color_1'] or not color == form['color_2']:
-                search.color.remove(color)
+    colors = []
+    if form['color_1']:
+        colors.append( form['color_1'] )
+    if form['color_2']:
+        colors.append( form['color_2'] )
 
- 
+    if not colors == search.color:
+        search.color= colors
+        change = True
+    
+        
     if form['option_1'] or form['option_2'] or form['option_3']:
         pass
 
     if form['zipcode'] or form['miles']:
-        if not search.zip == form['zipcode'] or not search.distance == form['miles']:
-            search.set_location( form['zipcode'], form['miles'] )
-            search.delete_finds()
+        if not search.zip == form['zipcode'] or not search.distance == int(form['miles']):
+            search.set_location( form['zipcode'], int(form['miles']) )
+            search.delete_finds( keep_notes = True )
             change = True
             
     if change:
@@ -227,6 +234,9 @@ def trims( make_model = None ):
     make,model = make_model.split('&')
     html = ""
     trims = Car.objects.trims( make, model )
+    if not model or not trims:
+        return '<option>{}</option>'.format( 'Any' )
+    
     for trim in trims:
         html += '<option>{}</option>'.format( trim )
     return html

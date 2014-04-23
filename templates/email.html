@@ -8,67 +8,50 @@
 <body style="padding: 0; margin: 0;">
 	<table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
 		<tr>
-			<td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<td colspan="3" align="left" valign="top" style="background-color: #f8f8f8;">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td colspan="3" align="left" valign="top"
-							style="background-color: #f8f8f8;">&nbsp;</td>
+						<td colspan="3" align="left" valign="top" style="background-color: #e7e7e7;"></td>
 					</tr>
 					<tr>
-						<td colspan="3" align="left" valign="top" style="background-color: #f8f8f8;">
-							<table width="100%" border="0" cellspacing="0" cellpadding="0">
-								<tr>
-									<td colspan="3" align="left" valign="top"
-										style="background-color: #e7e7e7;"></td>
-								</tr>
-								<tr>
-									<td height="10" colspan="3" align="left" valign="top"
-										style="background-color: #e7e7e7;">&nbsp;</td>
-								</tr>
-								<tr>
-									<td width="35" align="left" valign="top"
-										style="background-color: #e7e7e7;"></td>
-
-									<td align="left" 
-									    valign="top"
-										style="background-color: #e7e7e7; 
-										padding-bottom: 8px; 
-										font-size: 23px; 
-										font-family: Arial, Helvetica, sans-serif; color: #3369b3; 
-										line-height: 30px;">
-										Here are latest finds from <a href = 'http://finddaily.com'>FindDaily.com</a>
-									</td>
-									{% for find in finds %}
-									<td width="50" align="left" valign="top" style="background-color: #e7e7e7;">
-									<a href='{{find.url}}'>{{find.heading}}</a>
-									</td>
-									{% endfor %}
-								</tr>
-
-								<tr>
-									<td align="left" valign="top"
-										style="background-color: #e7e7e7;"></td>
-									<td align="left" valign="top"
-										style="background-color: #e7e7e7; font-size: 13px; font-family: Arial, Helvetica, sans-serif; line-height: 20px; color: #646565; background-color: #e7e7e7;">We
-										will never use your email address to send you any unsolicited
+						<td height="10" colspan="3" align="left" valign="top" style="background-color: #e7e7e7;">&nbsp;</td>
+					</tr>
+		
+				    	<td width="35" align="left" valign="top" style="background-color: #e7e7e7;"></td>
+						<td align="left"  valign="top"
+							style="background-color: #e7e7e7; padding-bottom: 8px; font-size: 23px; font-family: Arial, Helvetica, sans-serif; color: #3369b3; line-height: 30px;">
+								Here are latest finds from <a href = 'http://finddaily.com'>FindDaily.com</a>
+						</td>
+						<td width="50" align="left" valign="top" style="background-color: #e7e7e7;"></td>
+					</tr>
+					{% for find in finds %}
+					<tr>
+						<td align="left" valign="top" style="background-color: #e7e7e7;"></td>
+						<td align="left" valign="top" style="background-color: #e7e7e7; font-size: 13px; font-family: Arial, Helvetica, sans-serif; line-height: 20px; color: #646565; background-color: #e7e7e7;">
+							<a href="{{find.url}}" style="color: #3368b2; text-decoration: none;">{{find.heading}}</a>		
+						</td>
+						<td align="left" valign="top" style="background-color: #e7e7e7;"></td>
+					</tr>
+					{% endfor %} 
+					<tr>
+						<td align="left" valign="top" style="background-color: #e7e7e7;"></td>
+						<td align="left" valign="top"
+										style="background-color: #e7e7e7; font-size: 13px; font-family: Arial, Helvetica, sans-serif; line-height: 20px; color: #646565; background-color: #e7e7e7;">
+										We will never use your email address to send you any unsolicited
 										messages or information. This email and any files transmitted
 										with it are confidential and intended solely for the use of
 										the individual to whom they are addressed. If you have any
 										questions, please email us at <a href="#"
 										style="color: #3368b2; text-decoration: none;">xxxxx@xxxxx.com</a>
-									</td>
-									<td align="left" valign="top"
-										style="background-color: #e7e7e7;"></td>
-								</tr>
-								<tr>
-									<td colspan="3" align="left" valign="top"
-										style="background-color: #e7e7e7;">&nbsp;</td>
-								</tr>
-							</table></td>
+						</td>
+						<td align="left" valign="top" style="background-color: #e7e7e7;"></td>
+					</tr>
+					<tr>
+						<td colspan="3" align="left" valign="top" style="background-color: #e7e7e7;">&nbsp;</td>
 					</tr>
 				</table>
 			</td>
 		</tr>
 	</table>
-
 </body>
 </html>

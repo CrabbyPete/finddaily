@@ -77,14 +77,12 @@ def search_now():
             for search in searches:
                 if search.user:
                     finds = search_for( search )
-                    send_email( search.user, finds )
-                    if finds:
-                        for find in finds:
-                            print "Found: {}".format(find)
+                    for find in finds:
+                        print "Found: {}".format(find)
                         found.extend( finds )
         if found:
             send_email( sub.user, found )
 
 if __name__ == '__main__':
     search_now()
-    clean_up(days = 0 )
+    clean_up()
