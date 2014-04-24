@@ -57,8 +57,8 @@ def about():
 
 @app.errorhandler(500)
 def internal_error(error):
-    print str(error)
-    return "500 error"
+    msg = log(str(error) )
+    return "500 error:{}".format(msg)
 
 if __name__ == '__main__':
     app.run(debug = False,  port=8000)
