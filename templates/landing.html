@@ -10,11 +10,18 @@ function set_fields(pos){
 	$('#latitude').val(latitude);
 };
 
+
 $(document).ready(function() {
 	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition( set_fields );
+	   navigator.geolocation.getCurrentPosition( set_fields );
 	}
+	{% autoescape off %} 
+	var cars = [{{makes}}]
+	{% endautoescape %} 
+    $('#query').autocomplete({source:cars})
 });
+
+
 </script>
 {% endblock %}
 

@@ -24,6 +24,18 @@ BODYSTYLE  = ('suv','sedan','coupe','truck','minivan','wagon','convertible','hat
 
 MAKESLANG = dict( chevy = 'Chevrolet',  vw   = 'Volkswagen' )
 
+def find_make( words ):
+    """ Find the car make, if any
+    """
+    pass
+
+
+def find_model( words, make = None ):
+    """ Find the car model, and make if None
+    """
+    pass
+
+
 
 def parse_query( data, lati=None, longi=None, user=None ):
     """ parse the data string and figure out what is wanted

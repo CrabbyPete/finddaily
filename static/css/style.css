@@ -67,6 +67,7 @@ article .underline { text-decoration: underline; }
 #landing .logo .slogan { font-size: 15px; line-height: 19px; position: absolute; width: 300px; top: 99px; left: 164px; }
 #landing form { width: 674px; overflow: hidden; margin: 0 0 50px 140px; }
 #landing form .field { background: #f6f6f6; border: 0 none; font-size: 27px; line-height: 30px; height: 30px; padding: 10px 12px; float: left; width: 577px; font-weight: 300; color: #373b3d; border-radius: 0; }
+#landing form .typeahead { background: #f6f6f6; border: 0 none; font-size: 27px; line-height: 30px; height: 30px; padding: 10px 12px; float: left; width: 577px; font-weight: 300; color: #373b3d; border-radius: 0; }
 #landing form .btn-search { background: #00b4ff url(images/ico-search.png); width: 55px; height: 50px; float: right; border: 0 none; cursor: pointer; border-radius: 0; }
 #landing form .btn-search:hover { background-color: #42c7ff; }
 #landing form .btn-search:active { background-color: #009ee0; }

@@ -149,7 +149,12 @@ def save():
         pass
 
     if form['zipcode'] or form['miles']:
-        if not search.zip == form['zipcode'] or not search.distance == int(form['miles']):
+        if form['miles'] == 'unlimited':
+            if search.geo:
+                search.geo = []
+                change = True
+            
+        elif not search.zip == form['zipcode'] or not search.distance == int(form['miles']):
             search.set_location( form['zipcode'], int(form['miles']) )
             search.delete_finds( keep_notes = True )
             change = True

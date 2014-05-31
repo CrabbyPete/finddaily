@@ -17,7 +17,7 @@ EDMUNDS = {
 }
 
 class Edmunds( object ):
-    root_url = 'https://api.edmunds.com/api/vehicle/v2/{}?fmt=json&api_key={}'
+    root_url = 'https://api.edmunds.com/api/vehicle/v2/{}?fmt=json&view=basic&state=used&api_key={}'
 
     def success(f):
         def wrapper(*args, **argv):
@@ -50,11 +50,22 @@ class Edmunds( object ):
     def makes(self):
         return self.api('makes')
 
+    @success
     def models(self, make):
+        return self.api("{}/models".format(make))
         return
 
 
 if __name__ == '__main__':
+    from models import Car
+
     ed = Edmunds( EDMUNDS['key'],EDMUNDS['secret'])
     makes = ed.makes()
+    for make in makes:
+        make = Car.objects.get( make = make['niceName'] )
+        if not make:
+            print "No make {} in db"
+
+
+
     pass

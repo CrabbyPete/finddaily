@@ -81,7 +81,7 @@ def signup():
                 # Place holder until paid subscription enabled
                 if pay_method == 'free':
                     duration = 2
-                    
+
                 expires = datetime.today() + relativedelta( months = 2 )
                 subscription = Subscription( user    = user,
                                              expires = expires,
@@ -112,10 +112,10 @@ def account():
         context = { 'form':form, 'subscribed':subscribed }
         return render_template( 'account.html', **context )
 
-    if form.username.data : current_user.username  = form.username.data  
-    if form.email.data    : current_user.email     = form.email.data     
-    if form.phone.data    : current_user.phone     = form.phone.data     
-    if form.address.data  : current_user.address   = form.address.data   
+    if form.username.data : current_user.username  = form.username.data
+    if form.email.data    : current_user.email     = form.email.data
+    if form.phone.data    : current_user.phone     = form.phone.data
+    if form.address.data  : current_user.address   = form.address.data
     if form.subscribe.data: current_user.subscribe = form.subscribe.data
     if form.password.data : current_user.set_password( form.password.data )
     try:

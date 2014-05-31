@@ -5,6 +5,8 @@ import inspect
 from logging.handlers import SMTPHandler
 
 from flask            import *
+def init_logger( app ):
+    pass
 
 def log( msg ):
     stack = inspect.stack()[1]
@@ -12,4 +14,4 @@ def log( msg ):
     msg =  'Error: {} @ {}:{}'.format (msg, file, stack[2] )
     print msg
     return msg 
-    
+

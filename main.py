@@ -14,8 +14,10 @@ from config                 import SECRET_KEY
 from user                   import user, init_user
 from listings               import listings
 from payment                import payment
+from log                    import log
 
 from models.search          import Found
+from listings               import MAKES
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -41,13 +43,13 @@ def landing():
         if not search.make:
             search.delete()
             form.query.errors = ["Unknown make or model"]
-            context = {'user':current_user, 'form':form }
+            context = {'user':current_user, 'form':form, 'makes':  (', '.join('"' + m.lower() + '"' for m in MAKES))}
             return render_template( 'landing.html', **context )
 
         search_for( search )
         return redirect( url_for('listings.landing', search = search.pk, page =  0) )
 
-    context = { 'user':current_user, 'form':form }
+    context = { 'user':current_user, 'form':form, 'makes': (', '.join('"' + m.lower() + '"' for m in MAKES))}
     return render_template( 'landing.html', **context )
 
 
