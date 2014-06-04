@@ -83,7 +83,7 @@ class Payment( EmbeddedDocument ):
 
     
 class Subscription( Document ):
-    user     = ReferenceField( User, reverse_delete_rule = NULLIFY )
+    user     = ReferenceField( 'User', reverse_delete_rule = CASCADE )
     expires  = DateTimeField( default = datetime.now() )
     active   = BooleanField(default = False)
     
