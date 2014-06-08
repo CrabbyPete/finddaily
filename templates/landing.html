@@ -15,9 +15,9 @@ $(document).ready(function() {
 	if (navigator.geolocation) {
 	   navigator.geolocation.getCurrentPosition( set_fields );
 	}
-	{% autoescape off %} 
+	{% autoescape off %}
 	var cars = [{{makes}}]
-	{% endautoescape %} 
+	{% endautoescape %}
     $('#query').autocomplete({source:cars})
 });
 
@@ -58,22 +58,21 @@ $(document).ready(function() {
 			<div class="text-fader">
 				<ul class="slides">
 					<li>
-						<h4>"Toyota Tacoma under $9000.00 with less than 200,000
-							miles"</h4>
+						<h4>"2000 to 2004 Toyota Tacoma under $9000.00 within 100 miles"
+					   </h4>
 					</li>
 					<li>
-						<h4>"blue Chevy S10 less than $8000 blue less than 100,000
-							miles"</h4>
+						<h4>"blue Chevy S10 less than $8000 less than 100,000 miles"
+						</h4>
 					</li>
 					<li>
-						<h4>"2001 Toyota Tacoma around $7000 blue or white with less
-							than 100,000 miles"</h4>
+						<h4>"VW Bus anywhere"
+			            </h4>
 					</li>
 				</ul>
 			</div>
 
 		</div>
-
 
 	</div>
 
