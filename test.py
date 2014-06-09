@@ -25,12 +25,23 @@ class MainTestCase(unittest.TestCase):
         search = parse_query('Toyota Tacoma')
         assertTrue ( search.make == 'Toyota' )
         assertTrue ( search.model == 'Tacoma')
+        search.delete()
     
     def test_price_parse(self):
         search = parse_query('2000 to 2004 Toyota Tacoma under $9000.00 within 100 miles')
         assertTrue( search.make == 'Toyota')
         assertTrue( search.model == 'Tacoma')
-        assertTrue('blue' in search.colors )
+        assertTrue( search.price_max == 9000 )
+        assertTrue( search.distance == 100)
+        search.delete()
+    
+    def test_milage_parse(self):
+        search = parse_query('blue chevy s10 under 100,000 miles')
+        assertTrue( search.milage_max == 100000 )
+        assertTrue( 'blue' in search.colors)
+        search.delete()
+        
+        
     def tearDown(self):
         pass
 

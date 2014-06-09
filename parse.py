@@ -30,7 +30,6 @@ class Parse(object):
         self.search.search = data
         self.search.distance = 50
 
-
         if lati and longi:
             self.search.geo = [float(lati),float(longi)]
             try:
@@ -82,7 +81,15 @@ class Parse(object):
 
     def parse(self, query ):
         self.words  = word_tokenize(query)
-
+        
+        dollars          = False
+        last_number      = None
+        preceeding_word  = None
+        preposition      = None
+        year = datetime.today().year + 1
+        
+        for w, word in enumerate(words):
+            pass
 
 def parse_query( data, lati=None, longi=None, user=None ):
     """ parse the data string and figure out what is wanted
@@ -123,7 +130,6 @@ def parse_query( data, lati=None, longi=None, user=None ):
     last_number      = None
     preceeding_word  = None
     preposition      = None
-
 
     year = datetime.today().year + 1
     for w, word in enumerate(words):
