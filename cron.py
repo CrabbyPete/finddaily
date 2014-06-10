@@ -70,8 +70,13 @@ def search_now():
     for sub in Subscription.objects.all():
         found = []
         if sub.active and today <= sub.expires:
-
+            if not isinstance( sub.user, User ):
+                sub.delete()
+                continue
+            
             searches = Search.objects.filter( user = sub.user )
+ 
+            
             print "Searching {} for {} at {}".format( len(searches), sub.user.username, today.strftime('%Y-%m-%d %H:%M' ) )            
   
             for search in searches:

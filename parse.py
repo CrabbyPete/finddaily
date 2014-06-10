@@ -20,22 +20,76 @@ COLORS     = ('white','silver','black','gray','red','natural','brown','blue','gr
 CONDITION  = ('new','used')
 BODYSTYLE  = ('suv','sedan','coupe','truck','minivan','wagon','convertible','hatchback','van','hybrid')
 
-
-
 MAKESLANG = dict( chevy = 'Chevrolet',  vw   = 'Volkswagen' )
 
-def find_make( words ):
-    """ Find the car make, if any
-    """
-    pass
 
+class Parse(object):
+    search = Search()
+    
+    def __init__(self, lati=None, longi=None, user=None ):
+        self.search.search = data
+        self.search.distance = 50
 
-def find_model( words, make = None ):
-    """ Find the car model, and make if None
-    """
-    pass
+        if lati and longi:
+            self.search.geo = [float(lati),float(longi)]
+            try:
+                address,zipcode = reverse_geocode(lati,longi)
+            except Exception, e:
+                log(  "Geosearch error {}".format( str(e) ) )
+            else:
+                search.zip = zipcode
 
+        elif user and not user.is_anonymous:
+            try:
+                if user.location:
+                    search.geo = user.location
+                elif user.address:
+                    location = geocode( user.address )
+                    search.geo = [float(location['lat']), float(location['lng'])]
+            except Exception, e:
+                log ( 'User geo error {}'.format( str(e) ) )
+            
+    
+    @property
+    def latitude(self):
+        return self.search.geo[0]
+    
+    @property
+    def longitude(self):
+        return self.search.geo[1]
+    
+        
+    def find_make( self ):
+        """ Find the car make, if any
+        """
+        pass
 
+    def find_model( self ):
+        """ Find the car model, and make if None
+        """
+        pass
+
+    def find_dollars( words ):
+        """ Find dollar ranges and numbers
+        """
+        pass
+
+    def find_miles( words):
+        """ Find milages
+        """
+        pass
+
+    def parse(self, query ):
+        self.words  = word_tokenize(query)
+        
+        dollars          = False
+        last_number      = None
+        preceeding_word  = None
+        preposition      = None
+        year = datetime.today().year + 1
+        
+        for w, word in enumerate(words):
+            pass
 
 def parse_query( data, lati=None, longi=None, user=None ):
     """ parse the data string and figure out what is wanted
@@ -53,7 +107,7 @@ def parse_query( data, lati=None, longi=None, user=None ):
         except Exception, e:
             log(  "Geosearch error {}".format( str(e) ) )
         else:
-            search.zip = zipcode   
+            search.zip = zipcode
     elif user:
         if not user.is_anonymous():
             try:
@@ -64,9 +118,9 @@ def parse_query( data, lati=None, longi=None, user=None ):
                     search.geo = [float(location['lat']), float(location['lng'])]
             except Exception, e:
                 log ( 'User geo error {}'.format( str(e) ) )
-  
- 
-        
+
+
+
     # Break up the request
     words  = word_tokenize(data)
     #tags   = pos_tag(words)
@@ -76,7 +130,6 @@ def parse_query( data, lati=None, longi=None, user=None ):
     last_number      = None
     preceeding_word  = None
     preposition      = None
- 
 
     year = datetime.today().year + 1
     for w, word in enumerate(words):
@@ -84,26 +137,30 @@ def parse_query( data, lati=None, longi=None, user=None ):
         # Simplify the tags
         #pos  = simplify_wsj_tag(tag)
 
-        # Is this a number
-        if not word == '$':
-            dollars = False
-            word = normalize( word )
-        else:
+        # Is this a dollar figure
+        if word == '$':
             dollars = True
             continue
         
+        # Normalize everything
+        word = normalize( word )
+
+        # Check numbers        
         if word.isdigit():
             if int(word) >= 1914 and int(word) <= year and not search.make:
                 if preceeding_word in ['to', '-']:
                     search.year_to = int(word)
- 
+
                 elif not preceeding_word and not search.year_from:
                     search.year_from = int(word)
                     search.year_to = int(word)
                     continue
-     
+
             last_number = word
-        
+            if dollars:
+                word = 'dollars'
+                dollars = False
+
         if word == 'dollars':
             if preposition == 'under':
                 search.price_max = Decimal(last_number)
@@ -149,8 +206,8 @@ def parse_query( data, lati=None, longi=None, user=None ):
 
         if word in MAKESLANG:
             word = MAKESLANG[ word ]
-            
-        
+
+
         cars = Car.objects( make_normal__startswith = word )
         for car in cars:
             if car.make_normal == word:
@@ -159,17 +216,17 @@ def parse_query( data, lati=None, longi=None, user=None ):
                 make = word + ' ' + words[w+1]
                 if car.make_normal == make:
                     search.make = car.make
-                
+
         cars = Car.objects( models__model_normal__startswith = word )
         if len( cars ) == 1:
             if not search.make:
                 search.make = cars[0].make
-                
+
             if search.make == cars[0].make:
                 model = cars[0].get_model( word )
                 if model:
                     search.model = model.model
-            
+
         elif len( cars ) > 1 and search.make:
             for car in cars:
                 if car.make == search.make:
@@ -179,11 +236,11 @@ def parse_query( data, lati=None, longi=None, user=None ):
                     break
 
     # Done analyzing now save this for the user
-    search.name = normalize(search.make) 
+    search.name = normalize(search.make)
     if search.model:
         search.name += '-'+ normalize(search.model)
-        
-    if not user.is_anonymous():
+
+    if user and not user.is_anonymous():
         search.user = User.objects.get( pk = user.pk )
         searches = Search.objects.filter( user = user.pk ).count()
     else:

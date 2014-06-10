@@ -115,6 +115,14 @@ class Search( Document ):
         self.finds = [ find for find in finds ]
         return self.finds
 
+    @property
+    def latitude(self):
+        return self.geo[0]
+
+    @property
+    def longitude(self):
+        return self.geo[1]
+
     def set_location(self, zip, miles = None ):
         self.zip = zip
         if miles:
