@@ -1,5 +1,7 @@
 import os
 import unittest
+import decimal
+
 
 import main
 from parse  import parse_query
@@ -19,28 +21,29 @@ class MainTestCase(unittest.TestCase):
 
     def test_login_logout(self):
         rv = self.signin('peted','drd00m')
-        assertTrue(  rv.status_code == 200 )
+        self.assertTrue(  rv.status_code == 200 )
     
     def test_simple_parse(self):
         search = parse_query('Toyota Tacoma')
-        assertTrue ( search.make == 'Toyota' )
-        assertTrue ( search.model == 'Tacoma')
+        self.assertTrue ( search.make == 'Toyota' )
+        self.assertTrue ( search.model == 'Tacoma')
         search.delete()
     
     def test_price_parse(self):
         search = parse_query('2000 to 2004 Toyota Tacoma under $9000.00 within 100 miles')
-        assertTrue( search.make == 'Toyota')
-        assertTrue( search.model == 'Tacoma')
-        assertTrue( search.price_max == 9000 )
-        assertTrue( search.distance == 100)
+        self.assertTrue( search.make == 'Toyota')
+        self.assertTrue( search.model == 'Tacoma')
+        self.assertTrue( search.price_max == decimal.Decimal(9000) )
+        self.assertTrue( search.distance == 100)
         search.delete()
     
     def test_milage_parse(self):
         search = parse_query('blue chevy s10 under 100,000 miles')
-        assertTrue( search.milage_max == 100000 )
-        assertTrue( 'blue' in search.colors)
+        self.assertTrue( search.mileage_max == 100000 )
+        self.assertTrue( search.make == 'Chevrolet')
+        self.assertTrue( search.model == 'S-10')
+        self.assertTrue( 'blue' in search.color )
         search.delete()
-        
         
     def tearDown(self):
         pass

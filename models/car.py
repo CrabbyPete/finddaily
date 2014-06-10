@@ -5,16 +5,16 @@ from mongoengine            import *
 from mongoengine.queryset   import QuerySet, queryset_manager
 #from fuzzywuzzy             import process
 
-def normalize(s):
+def normalize(s, ignore = []):
     if not s:
         return ''
 
     s = s.replace('-',' ')
 
     for p in string.punctuation:
+        if p in ignore:
+            continue
         s = s.replace(p, '')
-
-    #s = s.replace(" ", "_")
 
     return s.lower().strip()
 

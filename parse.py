@@ -143,9 +143,17 @@ def parse_query( data, lati=None, longi=None, user=None ):
             continue
         
         # Normalize everything
-        word = normalize( word )
+        word = normalize( word, ignore = ['.'] )
 
-        # Check numbers        
+        # Check floating numbers first        
+        try:
+            last_number = float( word )
+            word = 'dollars'
+            dollars = False
+            
+        except ValueError:
+            pass
+ 
         if word.isdigit():
             if int(word) >= 1914 and int(word) <= year and not search.make:
                 if preceeding_word in ['to', '-']:
