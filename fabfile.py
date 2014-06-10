@@ -6,7 +6,7 @@ from contextlib              import contextmanager
 
 env.project_dir    = '/home/pete/finddaily'
 env.code_dir       = '/home/pete/finddaily/finddaily/'
-env.activate       = 'source ./bin/activate'
+env.activate       = 'source /home/pete/finddaily/bin/activate'
 env.hosts          = ['localhost']
 env.use_ssh_config = True
 

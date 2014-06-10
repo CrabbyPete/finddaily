@@ -2,7 +2,6 @@ import os
 import unittest
 import decimal
 
-
 import main
 from parse  import parse_query
 
