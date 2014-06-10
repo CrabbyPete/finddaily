@@ -19,7 +19,7 @@ class MainTestCase(unittest.TestCase):
 
 
     def test_login_logout(self):
-        rv = self.signin('peted','drd00m')
+        rv = self.signin('fred','fred is dead' )
         self.assertTrue(  rv.status_code == 200 )
     
     def test_simple_parse(self):
