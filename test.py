@@ -3,7 +3,7 @@ import main
 import unittest
 import tempfile
 
-class FlaskrTestCase(unittest.TestCase):
+class TestCase(unittest.TestCase):
 
     def setUp(self):
         main.app.config['TESTING'] = True
@@ -21,8 +21,7 @@ class FlaskrTestCase(unittest.TestCase):
         assert 'My Account' in rv.data
     
     def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(main.app.config['DATABASE'])
+        pass
 
 if __name__ == '__main__':
     unittest.main()
