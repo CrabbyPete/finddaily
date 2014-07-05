@@ -39,6 +39,7 @@ article .underline { text-decoration: underline; }
 .right { float: right; }
 
 .shell { width: 960px; margin: 0 auto; padding: 0 20px; }
+.shell a {margin-left: 140px;}
 
 #wrap { min-height: 100%; height: auto !important; height: 100%; margin: 0 0 -66px; }
 
