@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_simple %}
+
+{% block body_block %}
+<div id="account">
+	<div class="shell">
+		<h1>Enter your email address</h1>
+		<form action="{{ url_for('user.forgot') }}" method="post" class="acc-info" novalidate>
+			{{ form.csrf_token }}
+			<div class="row">
+				{{ render_field(form.email, class="field large", value="" ) }}	
+			</div>
+			<div class="row">
+				{{ render_field( form.submit, class = 'button', value='Submit') }}
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock body_block %}
