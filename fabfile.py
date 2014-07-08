@@ -1,3 +1,4 @@
+import pdb
 from fabric.api              import *
 from fabric.context_managers import prefix
 from contextlib              import contextmanager
@@ -19,6 +20,9 @@ def virtualenv():
 def deploy():
     local( "git pull" )
     with virtualenv():
+
         with cd( env.code_dir ):
-            result = run( "python test.py" )
+            run( "pip install -r requirements.txt" )
+            if run( "python test.py" ).failed:
+                print "Tests Failed"
 
