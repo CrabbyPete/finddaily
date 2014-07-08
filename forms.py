@@ -26,6 +26,12 @@ def validate_phone( form, field ):
         if not PHONE_REGEX.match(field.data):
             raise ValidationError('Invalid Phone number: %s' % field.data)
 
+
+class ForgotForm( Form ):
+    email    = TextField( u"Email" )
+    phone    = TelField(u"Phone Number",[ validators.optional(),validate_phone ] )
+    submit   = SubmitField("")
+
 UserForm = model_form( User )
 
 class AccountForm( Form ):

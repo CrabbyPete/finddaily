@@ -59,7 +59,7 @@ def about():
 
 @app.errorhandler(500)
 def internal_error(error):
-    msg = log(str(error) )
+    msg = log( str(error) )
     return "500 error:{}".format(msg)
 
 if __name__ == '__main__':

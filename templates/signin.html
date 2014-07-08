@@ -26,6 +26,8 @@
 				{{ render_field( form.submit, class = 'button', value='Sign In') }}
 			</div>
 		</form>
+		<br/>
+		<a href="{{ url_for('user.forgot') }}">Forgot your password click here</a>
 	</div>
 </div>
 {% endblock body_block %}

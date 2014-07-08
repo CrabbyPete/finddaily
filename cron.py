@@ -75,8 +75,7 @@ def search_now():
                 continue
             
             searches = Search.objects.filter( user = sub.user )
- 
-            
+   
             print "Searching {} for {} at {}".format( len(searches), sub.user.username, today.strftime('%Y-%m-%d %H:%M' ) )            
   
             for search in searches:

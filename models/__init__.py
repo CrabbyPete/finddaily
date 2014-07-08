@@ -1,4 +1,4 @@
-﻿from config import MONGODB
+from config import MONGODB
 
 from mongoengine import connect
 try:

@@ -1,3 +1,5 @@
+import random
+
 from flask                  import *
 from flask.ext.login        import ( LoginManager, login_required, login_user,
                                      logout_user, current_user
@@ -8,10 +10,12 @@ from dateutil.relativedelta import relativedelta
 
 from models.user            import User, Subscription
 from forms                  import ( SignInForm, SignUpForm, AccountForm,
-                                     SubscribeForm, UserForm
+                                     SubscribeForm, UserForm, ForgotForm
                                    )
 from geo                    import geocode
 from payment                import subscription
+from mailer                 import Mailer, Message
+from config                 import EMAIL
 
 user = Blueprint( 'user', __name__  )
 
@@ -182,3 +186,55 @@ def logout():
     """
     logout_user()
     return redirect('/')
+
+def send_email( user, password ):
+    """ Send new password to user
+    """
+    
+    mail  = Mailer( host    = EMAIL['host'], 
+                    port    = EMAIL['port'],
+                    use_tls = EMAIL['use_tls'], 
+                    usr     = EMAIL['user'], 
+                    pwd     = EMAIL['password']
+                  )
+                   
+    message = Message( From    = 'finds@finddaily.com',
+                       To      = [user.email],
+                       Subject = "Password Reset"
+                     )
+    
+    body = """Your new password for FindDaily is {}
+              You can reset it to what you like on your settings page once you log in with
+              this password
+           """.format(password )
+
+    message.Body = body
+    try:
+        mail.send(message)
+    except Exception, e:
+        log('Send mail error: {}'.format(str(e)))
+
+
+@user.route( '/forgot', methods=['GET','POST'] )
+def forgot():
+    form = ForgotForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        email = form.email.data
+        try:
+            user = User.objects.get( email = email )
+        except User.DoesNotExist:
+            form.email.errors = ['No such user']
+            context = {'form':form}
+            return render_template('forgot.html', **context )
+
+        chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        password = ''.join( map( lambda x: random.choice(chars), range(8) ))
+        user.set_password( password )
+        user.save()
+        
+        send_email( user, password )
+        return redirect('/signin')
+    else:
+        context = {'form':form}
+        return render_template('forgot.html', **context )

@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        module1
-# Purpose:
+# Purpose:     Create a csv from Edmonds
 #
 # Author:      Douma
 #
@@ -10,47 +10,47 @@
 #-------------------------------------------------------------------------------
 #!/usr/bin/env python
 
+import csv
+
 from api.edmunds    import Edmunds
 from models.car     import Car, Model, normalize
+from config         import EDMUNDS
 
-
-def add_make():
-    pass
-
-def add_model( make, model ):
-    years = set( model.years)
-    trims = set( model.trims )
-
-    for year in model['years']:
-        years |= set( [year['year']] )
-    for trim in year['styles']:
-        trims |= set( [ trim['name'] ] )
-
-    model.years = years
-    model.trims = list( trims )
-
-    make.models.append( model )
 
 def main():
+    # Open the CSV
+    f = open( 'edmonunds.csv', 'wb' )
+
+    # Change each fieldname to the appropriate field name. I know, so difficult.
+    writer = csv.DictWriter( f, fieldnames = ( "model_id",
+                                               "model_make_id",
+                                               "model_name",
+                                               "model_trim",
+                                               "model_year",
+                                               "model_make_display"
+                                             )
+                           )
+    row = { "model_id":001,
+            "model_make_id":None,
+            "model_name":None,
+            "model_trim":'',
+            "model_year":None,
+            "model_make_display":None
+    }
+
     ed = Edmunds( EDMUNDS['key'],EDMUNDS['secret'])
     makes = ed.makes()
     for make in makes['makes']:
         make_normal = normalize( make['name'] )
-        try:
-            my_make = Car.objects.get( make_normal = make_normal)
-        except Car.DoesNotExist:
-            my_make = Car( make_normal = make_normal, make = make['name'] )
-
-        models = ed.models( make['niceName'] )
-        for model in models['models']:
-            model_name = normalize( model['name'] )
-            if not my_make.get_model(model_name):
-                my_model = Model( name = model['name'],
-                                  model_normal = model_name)
+        row['model_make_id'] = make_normal
+        row['model_make_display'] = make['name']
+        for model in make['models']:
+            row['model_name'] = model['name']
+            for year in model['years']:
+                row['model_year'] = year['year']
+                writer.writerow( row )
 
 
-                my_make.models.append( my_model )
-        result = my_make.save()
 
 if __name__ == '__main__':
     main()
