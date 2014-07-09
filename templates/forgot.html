@@ -6,7 +6,7 @@
 <div id="account">
 	<div class="shell">
 		<h1>Enter your email address</h1>
-		<form action="{{ url_for('user.forgot') }}" method="post" class="acc-info" novalidate>
+		<form action="{{ url_for('user.forgot') }}" method="post" class="forgot" novalidate>
 			{{ form.csrf_token }}
 			<div class="row">
 				{{ render_field(form.email, class="field large", value="" ) }}	
