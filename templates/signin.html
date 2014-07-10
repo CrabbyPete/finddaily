@@ -12,22 +12,24 @@
 				{{ render_field(form.username, class='field medium') }} 
 			</div>
 			<div class="row">
-			<p>or</p>
+				<p>or</p>
 			</div>
 			<div class="row">
-			{{ render_field(form.email, class="field large", value="" ) }}	
+				{{ render_field(form.email, class="field large", value="" ) }}	
 			</div>
-			
 			
 			<div class="row pass-row">
 				{{ render_field( form.password, class="field") }}
 			</div>
+			
 			<div class="row">
 				{{ render_field( form.submit, class = 'button', value='Sign In') }}
 			</div>
 		</form>
 		<br/>
-		<a href="{{ url_for('user.forgot') }}">Forgot your password click here</a>
+		<div id='forgot'>
+			<a href="{{ url_for('user.forgot') }}">Forgot your password click here</a>
+		</div>
 	</div>
 </div>
 {% endblock body_block %}

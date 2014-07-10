@@ -25,7 +25,6 @@ def deploy():
         with cd( env.code_dir ):
             run( "pip install -r requirements.txt" )
             result = run( "python ./test.py" )
-            pdb.set_trace()
             if result.failed:
                print "Test failed"
 
