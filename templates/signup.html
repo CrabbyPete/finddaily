@@ -71,19 +71,19 @@
 				{{ render_field(form.address, class='field large') }}
 			</div>
 			<br/>
-			<br/>
+ 			<div class="row">
+				{{ render_field( form.save, class = 'button', value='Save') }}
+			</div>
+			
+			<!--  
 			<div class="subscribe">
-				<h3>Subscribe for <strong>$3.99 a month</strong></h3>
+				<h3>Subscribe for <strong>$1.99 a month</strong></h3>
 
 				<p>To have more than two free searches and to get update emails or phone text message you have to subscribe. Subscriptions are $3.99 a month and you can choose easy ways to pay!</p>
 
 				<div class="row">
-					<!--  
-					<label>Subscribe for</label>
-					<input type="text" class="field month" value="2" />
-					<span class="txt">months</span>
-					-->
-					{{ render_field(form.duration, class="field month", value = 2) }}
+
+					{{ render_field(form.duration, class="field month", value = 1) }}
 					<span class="txt">months</span>
 				</div>
 	
@@ -99,6 +99,8 @@
 					{{ render_field( form.save, class = 'button', value='Save') }}
 				</div>
 			</div>
+			-->
+			
 		</form>
 	</div>
 </div>

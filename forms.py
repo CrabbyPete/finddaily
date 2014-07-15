@@ -20,16 +20,22 @@ class SignInForm( Form ):
     submit   = SubmitField("")
 
 
+PHONE_REGEX = r'1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?'
 def validate_phone( form, field ):
-        PHONE_REGEX = re.compile(r'1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?')
+        regx = re.compile(PHONE_REGEX)
 
-        if not PHONE_REGEX.match(field.data):
+        if not regx.match(field.data):
             raise ValidationError('Invalid Phone number: %s' % field.data)
 
 
+class Phone( validators.Regexp ):
+    def __init__(self):
+        super(Phone, self).__init__( r'1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?', 
+                                     message = "That\'s not a valid phone number")
+ 
 class ForgotForm( Form ):
     email    = TextField( u"Email" )
-    phone    = TelField(u"Phone Number",[ validators.optional(),validate_phone ] )
+    phone    = TelField(u"Phone Number",[ validators.optional(), Phone() ] )
     submit   = SubmitField("")
 
 UserForm = model_form( User )
@@ -42,7 +48,7 @@ class AccountForm( Form ):
                                        ])
     
     subscribe   = BooleanField(u'',default = True)
-    phone       = TelField(u"Phone Number",[ validators.optional(),validate_phone ] )
+    phone       = TelField(u"Phone Number",[ validators.optional(), Phone() ] )
     password    = PasswordField(u"Password")
     new_passwrd = PasswordField(u"New Password")
     address     = TextField(u"Full Address")
