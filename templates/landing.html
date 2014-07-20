@@ -42,15 +42,17 @@ $(document).ready(function() {
 			{{ form.csrf_token }}
             {{ form.latitude  }}
             {{ form.longitude }}
-			{{ render_field(form.query, class='field',placeholder='What are you looking for?') }}
+			{{ render_field(form.query, class='field',placeholder='Describe the car you looking for?') }}
 			{{ form.submit(class = "btn-search notext") }}
 		</form>
 
 		<div class="entry">
-			<a href="#" class="ico-help"><img
-				src="{{ url_for ('static', filename = 'css/images/ico-question.png')}}"
-				alt="" width="28" height="86" />
+			<!-- 
+			<a href="{{url_for('about')}}" class="ico-help"> 
+				<img src="{{ url_for ('static', filename = 'css/images/ico-question.png')}}"
+				     alt="" width="28" height="86" />
 			</a>
+			 -->
 			<p>Simply describe the vehicle you are looking for with as many
 				details as you like</p>
 
