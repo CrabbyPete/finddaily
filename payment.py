@@ -24,7 +24,7 @@ PAL = paypal_api.set_config( mode          = "sandbox",
                              client_id     = PAYPAL['client_id'],
                              client_secret = PAYPAL['secret']
                             )
-PAL.get_token()
+#PAL.get_token()
 
 
 # Setup Dwolla API

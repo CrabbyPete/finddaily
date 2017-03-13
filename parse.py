@@ -1,7 +1,8 @@
-from datetime           import datetime
-from decimal            import Decimal
+from datetime       import datetime
+from decimal        import Decimal
 
-from nltk               import word_tokenize, pos_tag, ne_chunk
+from nltk           import word_tokenize, pos_tag, ne_chunk
+from nltk.tokenize  import RegexpTokenizer
 #from nltk.tag.simplify  import simplify_wsj_tag
 
 from geo            import geocode, reverse_geocode, walk
@@ -23,12 +24,13 @@ BODYSTYLE  = ('suv','sedan','coupe','truck','minivan','wagon','convertible','hat
 MAKESLANG = dict( chevy = 'Chevrolet',  vw   = 'Volkswagen' )
 
 
+
 class Parse(object):
-    search = Search()
+    search = {}
     
-    def __init__(self, lati=None, longi=None, user=None ):
-        self.search.search = data
-        self.search.distance = 50
+    def __init__(self, lati=None, longi=None, user = None ):
+        self.search['search'] = data
+        self.search['distance'] = 50
 
         if lati and longi:
             self.search.geo = [float(lati),float(longi)]
@@ -42,7 +44,7 @@ class Parse(object):
         elif user and not user.is_anonymous:
             try:
                 if user.location:
-                    search.geo = user.location
+                    search['geo'] = user.location
                 elif user.address:
                     location = geocode( user.address )
                     search.geo = [float(location['lat']), float(location['lng'])]
@@ -80,9 +82,9 @@ class Parse(object):
         pass
 
     def parse(self, query ):
-        self.words  = word_tokenize(query)
+        tokenizer = RegexpTokenizer('\w+|\$[\d\.]+|\S+')
+        self.words  = tokenizer.tokenize(query)
         
-        dollars          = False
         last_number      = None
         preceeding_word  = None
         preposition      = None
@@ -90,6 +92,13 @@ class Parse(object):
         
         for w, word in enumerate(words):
             pass
+
+
+def get_properties( query ):
+    tokenizer = RegexpTokenizer('\w+|\$[\d\.]+|\S+')
+    query = query.replace('-', '- ')
+    words  = tokenizer.tokenize(query)
+    return words
 
 def parse_query( data, lati=None, longi=None, user=None ):
     """ parse the data string and figure out what is wanted
@@ -119,10 +128,10 @@ def parse_query( data, lati=None, longi=None, user=None ):
             except Exception, e:
                 log ( 'User geo error {}'.format( str(e) ) )
 
-
-
     # Break up the request
+    #data = data.replace('-',' - ')
     words  = word_tokenize(data)
+    get_properties( data )
     #tags   = pos_tag(words)
     #chunks = ne_chunk(tags)
 
@@ -146,14 +155,11 @@ def parse_query( data, lati=None, longi=None, user=None ):
         word = normalize( word, ignore = ['.'] )
 
         # Check floating numbers first        
-        try:
+        if '.' in word:
             last_number = float( word )
-            word = 'dollars'
+            word = 'dollars' 
             dollars = False
-            
-        except ValueError:
-            pass
- 
+                    
         if word.isdigit():
             if int(word) >= 1914 and int(word) <= year and not search.make:
                 if preceeding_word in ['to', '-']:
@@ -254,7 +260,6 @@ def parse_query( data, lati=None, longi=None, user=None ):
     else:
         search.user = None
 
-
     try:
         search.save()
     except Exception, e:
@@ -263,3 +268,9 @@ def parse_query( data, lati=None, longi=None, user=None ):
     #print '{}-{}'.format( search.make, search.model)
     return search
 
+if __name__ == '__main__':
+    #s = parse_query( '2001 toyota tacoma')
+    #s = parse_query( '2000-2001 chevy camaro')
+    #s = parse_query('2000 - 2001 subaru')
+    s = parse_query('toyota rav4 $8000.00-$10000')
+    pass

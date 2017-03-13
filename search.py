@@ -223,10 +223,10 @@ class SearchThreeTaps():
 def search_for( search ):
     """ Check all the api's for result 
     """
-    api = SearchThreeTaps()
-    results = api.start_search( search )
+    #api = SearchThreeTaps()
+    #results = api.start_search( search )
     #results = search_threetaps( search )
-    #search_lemonfree( search )
+    results = search_lemonfree( search )
     return results
 
 
